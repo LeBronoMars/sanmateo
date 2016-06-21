@@ -14,6 +14,7 @@ import (
 	"gopkg.in/redis.v3"
 	"github.com/gin-gonic/gin"
 	"github.com/dgrijalva/jwt-go"
+	"github.com/pusher/pusher-http-go"
 )
 
 func respond(statusCode int, responseMessage string, c *gin.Context, isError bool) {
@@ -140,4 +141,9 @@ func IsTokenValid(c *gin.Context) bool {
 		return false
 	}
 	return true
+}
+
+func SendPushNotification(pusher *pusher.Client, channel string, event string, message string) {
+	data := map[string]string{"message": message}
+	pusher.Trigger(channel,event,data)
 }

@@ -27,6 +27,23 @@ func (handler NewsHandler) Index(c *gin.Context) {
 }
 
 func (handler NewsHandler) Create(c *gin.Context) {
-
+	if IsTokenValid(c) {
+		var news m.News
+		err := c.Bind(&news)
+		if err == nil {
+			result := handler.db.Create(&news)
+			if result.RowsAffected > 0 {
+				SendPushNotification(handler.pusher,"all","news created",news.Title)
+				c.JSON(http.StatusCreated,news)
+			} else {
+				respond(http.StatusBadRequest,result.Error.Error(),c,true)
+			}
+		} else {
+			respond(http.StatusBadRequest,err.Error(),c,true)
+		}
+	} else {
+		respond(http.StatusForbidden,"Sorry, but your session has expired!",c,true)	
+	}
+	return
 }
 

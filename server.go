@@ -36,6 +36,7 @@ func LoadAPIRoutes(r *gin.Engine, db *gorm.DB, pusher *pusher.Client) {
 	//manage news
 	newsHandler := h.NewNewsHandler(db,pusher)
 	private.GET("/news", newsHandler.Index)
+	private.POST("/news", newsHandler.Create)
 
 	var port = os.Getenv("PORT")
 	if port == "" {
