@@ -7,8 +7,8 @@ import (
 
 	"github.com/gin-gonic/gin"
 	_ "github.com/go-sql-driver/mysql"
-	//h "bfp/avi/api/handlers"
-	//m "bfp/avi/api/models"
+	h "profile/sanmateo/api/handlers"
+	m "profile/sanmateo/api/models"
 	"profile/sanmateo/api/config"
 	"github.com/jinzhu/gorm"
 	"github.com/dgrijalva/jwt-go"
@@ -21,10 +21,15 @@ func main() {
 }
 
 func LoadAPIRoutes(r *gin.Engine, db *gorm.DB) {
-	//public := r.Group("/api/v1")
+	public := r.Group("/api/v1")
 	private := r.Group("/api/v1")
 	private.Use(Auth(config.GetString("TOKEN_KEY")))
 
+	//manage users
+	userHandler := h.NewUserHandler(db)
+	public.POST("/user", userHandler.Create)
+	public.POST("/login", userHandler.Auth)
+	private.GET("/users", userHandler.Index)
 
 	var port = os.Getenv("PORT")
 	if port == "" {
@@ -60,9 +65,8 @@ func InitDB() *gorm.DB {
 		panic(fmt.Sprintf("Error connecting to the database:  %s", err))
 	}
 	_db.DB()
-	_db.LogMode(true)
-	//_db.Set("gorm:table_options", "ENGINE=InnoDB").AutoMigrate(&m.User{},&m.Incident{},&m.FireStatus{},&m.FireStation{})
-	_db.Set("gorm:table_options", "ENGINE=InnoDB")
+	//_db.LogMode(true)
+	_db.Set("gorm:table_options", "ENGINE=InnoDB").AutoMigrate(&m.User{})
 	return &_db
 }
 

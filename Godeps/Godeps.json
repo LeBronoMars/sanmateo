@@ -1,0 +1,145 @@
+{
+	"ImportPath": "profile/sanmateo/api",
+	"GoVersion": "go1.6",
+	"Deps": [
+		{
+			"ImportPath": "github.com/BurntSushi/toml",
+			"Comment": "v0.1.0-21-g056c9bc",
+			"Rev": "056c9bc7be7190eaa7715723883caffa5f8fa3e4"
+		},
+		{
+			"ImportPath": "github.com/dgrijalva/jwt-go",
+			"Comment": "v3.0.0-2-gf077707",
+			"Rev": "f0777076321ab64f6efc15a82d9d23b98539b943"
+		},
+		{
+			"ImportPath": "github.com/gin-gonic/gin",
+			"Comment": "v1.0rc1-268-gf931d1e",
+			"Rev": "f931d1ea80ae95a6fc739213cdd9399bd2967fb6"
+		},
+		{
+			"ImportPath": "github.com/gin-gonic/gin/binding",
+			"Comment": "v1.0rc1-268-gf931d1e",
+			"Rev": "f931d1ea80ae95a6fc739213cdd9399bd2967fb6"
+		},
+		{
+			"ImportPath": "github.com/gin-gonic/gin/render",
+			"Comment": "v1.0rc1-268-gf931d1e",
+			"Rev": "f931d1ea80ae95a6fc739213cdd9399bd2967fb6"
+		},
+		{
+			"ImportPath": "github.com/go-sql-driver/mysql",
+			"Comment": "v1.2-125-gd512f20",
+			"Rev": "d512f204a577a4ab037a1816604c48c9c13210be"
+		},
+		{
+			"ImportPath": "github.com/golang/protobuf/proto",
+			"Rev": "0fd8c908d872c921af513ef5091964bbd2e0d904"
+		},
+		{
+			"ImportPath": "github.com/hashicorp/hcl",
+			"Rev": "197e8d3cf42199cfd53cd775deb37f3637234635"
+		},
+		{
+			"ImportPath": "github.com/hashicorp/hcl/hcl/ast",
+			"Rev": "197e8d3cf42199cfd53cd775deb37f3637234635"
+		},
+		{
+			"ImportPath": "github.com/hashicorp/hcl/hcl/parser",
+			"Rev": "197e8d3cf42199cfd53cd775deb37f3637234635"
+		},
+		{
+			"ImportPath": "github.com/hashicorp/hcl/hcl/scanner",
+			"Rev": "197e8d3cf42199cfd53cd775deb37f3637234635"
+		},
+		{
+			"ImportPath": "github.com/hashicorp/hcl/hcl/strconv",
+			"Rev": "197e8d3cf42199cfd53cd775deb37f3637234635"
+		},
+		{
+			"ImportPath": "github.com/hashicorp/hcl/hcl/token",
+			"Rev": "197e8d3cf42199cfd53cd775deb37f3637234635"
+		},
+		{
+			"ImportPath": "github.com/hashicorp/hcl/json/parser",
+			"Rev": "197e8d3cf42199cfd53cd775deb37f3637234635"
+		},
+		{
+			"ImportPath": "github.com/hashicorp/hcl/json/scanner",
+			"Rev": "197e8d3cf42199cfd53cd775deb37f3637234635"
+		},
+		{
+			"ImportPath": "github.com/hashicorp/hcl/json/token",
+			"Rev": "197e8d3cf42199cfd53cd775deb37f3637234635"
+		},
+		{
+			"ImportPath": "github.com/jinzhu/gorm",
+			"Rev": "9a63fb28bad5cfdb0f89e918ad063f45285f1064"
+		},
+		{
+			"ImportPath": "github.com/jinzhu/inflection",
+			"Rev": "3272df6c21d04180007eb3349844c89a3856bc25"
+		},
+		{
+			"ImportPath": "github.com/kr/pretty",
+			"Comment": "go.weekly.2011-12-22-27-ge6ac2fc",
+			"Rev": "e6ac2fc51e89a3249e82157fa0bb7a18ef9dd5bb"
+		},
+		{
+			"ImportPath": "github.com/kr/text",
+			"Rev": "bb797dc4fb8320488f47bf11de07a733d7233e1f"
+		},
+		{
+			"ImportPath": "github.com/lib/pq/hstore",
+			"Comment": "go1.0-cutoff-63-g11fc39a",
+			"Rev": "11fc39a580a008f1f39bb3d11d984fb34ed778d9"
+		},
+		{
+			"ImportPath": "github.com/magiconair/properties",
+			"Comment": "v1.6.0-1-gc81f9d7",
+			"Rev": "c81f9d71af8f8cba1466501d30326b99a4e56c19"
+		},
+		{
+			"ImportPath": "github.com/manucorporat/sse",
+			"Rev": "fe6ea2c8e398672518ef204bf0fbd9af858d0e15"
+		},
+		{
+			"ImportPath": "github.com/mitchellh/mapstructure",
+			"Rev": "281073eb9eb092240d33ef253c404f1cca550309"
+		},
+		{
+			"ImportPath": "github.com/spf13/cast",
+			"Rev": "ee7b3e0353166ab1f3a605294ac8cd2b77953778"
+		},
+		{
+			"ImportPath": "github.com/spf13/jwalterweatherman",
+			"Rev": "c2aa07df593850a04644d77bb757d002e517a296"
+		},
+		{
+			"ImportPath": "github.com/spf13/pflag",
+			"Rev": "7f60f83a2c81bc3c3c0d5297f61ddfa68da9d3b7"
+		},
+		{
+			"ImportPath": "github.com/spf13/viper",
+			"Rev": "110492b3001269a0777997fcbe68a60828fac4cb"
+		},
+		{
+			"ImportPath": "golang.org/x/net/context",
+			"Rev": "5d0a0f8cd486626821d2ba44d471ab1c9271d38f"
+		},
+		{
+			"ImportPath": "gopkg.in/fsnotify.v1",
+			"Comment": "v1.2.8",
+			"Rev": "508915b7500b6e42a87132e4afeb4729cebc7cbb"
+		},
+		{
+			"ImportPath": "gopkg.in/go-playground/validator.v8",
+			"Comment": "v8.17.1",
+			"Rev": "014792cf3e266caff1e916876be12282b33059e0"
+		},
+		{
+			"ImportPath": "gopkg.in/yaml.v2",
+			"Rev": "f7716cbe52baa25d2e9b0d0da546fcf909fc16b4"
+		}
+	]
+}
