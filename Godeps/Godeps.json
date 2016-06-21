@@ -108,6 +108,11 @@
 			"Rev": "281073eb9eb092240d33ef253c404f1cca550309"
 		},
 		{
+			"ImportPath": "github.com/pusher/pusher-http-go",
+			"Comment": "v1.1.0",
+			"Rev": "b915b0ee45c29251bb551e531658831a02f9bb98"
+		},
+		{
 			"ImportPath": "github.com/spf13/cast",
 			"Rev": "ee7b3e0353166ab1f3a605294ac8cd2b77953778"
 		},
@@ -128,6 +133,10 @@
 			"Rev": "5d0a0f8cd486626821d2ba44d471ab1c9271d38f"
 		},
 		{
+			"ImportPath": "gopkg.in/bsm/ratelimit.v1",
+			"Rev": "db14e161995a5177acef654cb0dd785e8ee8bc22"
+		},
+		{
 			"ImportPath": "gopkg.in/fsnotify.v1",
 			"Comment": "v1.2.8",
 			"Rev": "508915b7500b6e42a87132e4afeb4729cebc7cbb"
@@ -136,6 +145,31 @@
 			"ImportPath": "gopkg.in/go-playground/validator.v8",
 			"Comment": "v8.17.1",
 			"Rev": "014792cf3e266caff1e916876be12282b33059e0"
+		},
+		{
+			"ImportPath": "gopkg.in/redis.v3",
+			"Comment": "v3.6.3",
+			"Rev": "a905127dc89ca51a241eacf70757a40423ab93d0"
+		},
+		{
+			"ImportPath": "gopkg.in/redis.v3/internal",
+			"Comment": "v3.6.3",
+			"Rev": "a905127dc89ca51a241eacf70757a40423ab93d0"
+		},
+		{
+			"ImportPath": "gopkg.in/redis.v3/internal/consistenthash",
+			"Comment": "v3.6.3",
+			"Rev": "a905127dc89ca51a241eacf70757a40423ab93d0"
+		},
+		{
+			"ImportPath": "gopkg.in/redis.v3/internal/hashtag",
+			"Comment": "v3.6.3",
+			"Rev": "a905127dc89ca51a241eacf70757a40423ab93d0"
+		},
+		{
+			"ImportPath": "gopkg.in/redis.v3/internal/pool",
+			"Comment": "v3.6.3",
+			"Rev": "a905127dc89ca51a241eacf70757a40423ab93d0"
 		},
 		{
 			"ImportPath": "gopkg.in/yaml.v2",

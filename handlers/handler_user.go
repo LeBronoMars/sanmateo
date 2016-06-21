@@ -90,6 +90,7 @@ func (handler UserHandler) Auth(c *gin.Context) {
 					authenticatedUser.CreatedAt = user.CreatedAt
 					authenticatedUser.UpdatedAt = user.UpdatedAt
 					authenticatedUser.Gender = user.Gender
+					authenticatedUser.PicUrl = user.PicUrl
 					authenticatedUser.Token = generateJWT(email)
 					c.JSON(http.StatusOK, authenticatedUser)
 				}					

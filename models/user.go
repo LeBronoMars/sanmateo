@@ -12,10 +12,12 @@ type User struct {
 	Password string `json:"-"`
 	IsPasswordDefault bool `json:"is_password_default"`
 	Gender string `json:"gender" form:"gender" binding:"required"`
+	PicUrl string `json:"pic_url" form:"pic_url"`
 }
 
 func (u *User) BeforeCreate() (err error) {
 	u.IsPasswordDefault = true
 	u.Status = "active"
+	u.PicUrl = ""
 	return
 }

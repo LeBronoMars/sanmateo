@@ -31,6 +31,10 @@ func LoadAPIRoutes(r *gin.Engine, db *gorm.DB) {
 	public.POST("/login", userHandler.Auth)
 	private.GET("/users", userHandler.Index)
 
+	//manage news
+	newsHandler := h.NewsHandler(db)
+	private.GET("/news", newsHandler.Index)
+
 	var port = os.Getenv("PORT")
 	if port == "" {
 		port = "9000"
@@ -47,7 +51,7 @@ func Auth(secret string) gin.HandlerFunc {
 		    return []byte(config.GetString("TOKEN_KEY")), nil
 		})
 
-		if !token.Valid {
+		if err != nil || !token.Valid {
 		    c.AbortWithError(401, err)
 		} 
 	}
@@ -66,7 +70,7 @@ func InitDB() *gorm.DB {
 	}
 	_db.DB()
 	//_db.LogMode(true)
-	_db.Set("gorm:table_options", "ENGINE=InnoDB").AutoMigrate(&m.User{})
+	_db.Set("gorm:table_options", "ENGINE=InnoDB").AutoMigrate(&m.User{},&m.News{})
 	return &_db
 }
 

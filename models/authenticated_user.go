@@ -14,5 +14,6 @@ type AuthenticatedUser struct {
 	CreatedAt time.Time `json:"created_at"`
 	UpdatedAt time.Time `json:"updated_at"`
 	Gender string `json:"gender"`
+	PicUrl string `json:"pic_url"`
 	Token string `json:"token"`
 }
