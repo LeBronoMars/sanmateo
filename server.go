@@ -12,15 +12,17 @@ import (
 	"profile/sanmateo/api/config"
 	"github.com/jinzhu/gorm"
 	"github.com/dgrijalva/jwt-go"
+	"github.com/pusher/pusher-http-go"
 )
 
 func main() {
+	pusher := *InitPusher()
 	db := *InitDB()
 	router := gin.Default()
-	LoadAPIRoutes(router, &db)
+	LoadAPIRoutes(router, &db, &pusher)
 }
 
-func LoadAPIRoutes(r *gin.Engine, db *gorm.DB) {
+func LoadAPIRoutes(r *gin.Engine, db *gorm.DB, pusher *pusher.Client) {
 	public := r.Group("/api/v1")
 	private := r.Group("/api/v1")
 	private.Use(Auth(config.GetString("TOKEN_KEY")))
@@ -32,7 +34,7 @@ func LoadAPIRoutes(r *gin.Engine, db *gorm.DB) {
 	private.GET("/users", userHandler.Index)
 
 	//manage news
-	newsHandler := h.NewsHandler(db)
+	newsHandler := h.NewNewsHandler(db,pusher)
 	private.GET("/news", newsHandler.Index)
 
 	var port = os.Getenv("PORT")
@@ -72,6 +74,16 @@ func InitDB() *gorm.DB {
 	//_db.LogMode(true)
 	_db.Set("gorm:table_options", "ENGINE=InnoDB").AutoMigrate(&m.User{},&m.News{})
 	return &_db
+}
+
+func InitPusher() *pusher.Client {
+    client := pusher.Client{
+      AppId: config.GetString("PUSHER_APP_ID"),
+      Key: config.GetString("PUSHER_APP_KEY"),
+      Secret: config.GetString("PUSHER_APP_SECRET"),
+      Cluster: config.GetString("PUSHER_CLUSTER"),
+    }
+    return &client
 }
 
 func GetPort() string {

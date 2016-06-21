@@ -40,13 +40,6 @@ type Response struct {
 
 //generate JWT
 func generateJWT(username string) string {
-	// Create the token
-	//token := jwt_lib.New(jwt_lib.GetSigningMethod("HS256"))
-	// Set some claims
-	//token.Claims["ID"] = username
-	//token.Claims["exp"] = time.Now().Add(time.Hour * 24).Unix()
-	// Sign and get the complete encoded token as a string
-	//tokenString, _ := token.SignedString([]byte(config.GetString("TOKEN_KEY")))
 	mySigningKey := []byte(config.GetString("TOKEN_KEY"))
     claims := &jwt.StandardClaims{
     	ExpiresAt: time.Now().Add(time.Hour * 24).Unix(),

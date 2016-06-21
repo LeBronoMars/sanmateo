@@ -2,31 +2,31 @@ package handlers
 
 import (
 	"net/http"
-    "strings"
 
 	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/gorm"
 	m "profile/sanmateo/api/models"
-	"profile/sanmateo/api/config"
 	"github.com/pusher/pusher-http-go"
 )
 
-type UserHandler struct {
+type NewsHandler struct {
 	db *gorm.DB
+	pusher *pusher.Client
 }
 
-func NewsHandler(db *gorm.DB) NewsHandler {
-	return NewsHandler{db}
+func NewNewsHandler(db *gorm.DB, pusher *pusher.Client) *NewsHandler {
+	return &NewsHandler{db,pusher}
 }
 
 //get all news
-func (handle NewsHandler) Index(c *gin.Context) {
+func (handler NewsHandler) Index(c *gin.Context) {
 	news := []m.News{}
 	handler.db.Find(&news)
 	c.JSON(http.StatusOK,news)
 	return
 }
 
-func (handle NewsHandler) Create(c *gin.Context) {
+func (handler NewsHandler) Create(c *gin.Context) {
 
 }
+
