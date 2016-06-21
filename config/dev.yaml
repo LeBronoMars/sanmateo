@@ -1,0 +1,7 @@
+DB_HOST: "localhost"
+DB_PORT: 3306
+DB_USER: "root"
+DB_PASS: ""
+DB_NAME: "sanmateo"
+CRYPT_KEY: "vz7oWXaUm691nvAwXJuvs9U6UM04ZZs0"
+TOKEN_KEY: "XvkAKPFg6vHQ930PRt13REOZjJuAu0b9fbLaqXC8"
