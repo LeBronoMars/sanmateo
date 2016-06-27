@@ -43,6 +43,11 @@ func LoadAPIRoutes(r *gin.Engine, db *gorm.DB, pusher *pusher.Client) {
 	private.POST("/gallery", galleryHandler.Create)
 	private.GET("/galleries", galleryHandler.Index)
 
+	//manage incidents
+	incidentsHandler := h.NewIncidentsHandler(db,pusher)
+	private.GET("/incidents", incidentsHandler.Index)
+	private.POST("/incident", incidentsHandler.Create)
+
 	var port = os.Getenv("PORT")
 	if port == "" {
 		port = "9000"
@@ -78,7 +83,7 @@ func InitDB() *gorm.DB {
 	}
 	_db.DB()
 	//_db.LogMode(true)
-	_db.Set("gorm:table_options", "ENGINE=InnoDB").AutoMigrate(&m.User{},&m.News{})
+	_db.Set("gorm:table_options", "ENGINE=InnoDB").AutoMigrate(&m.User{},&m.News{},&m.Gallery{},&m.Incident{})
 	return &_db
 }
 
