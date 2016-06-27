@@ -34,7 +34,7 @@ func (handler UserHandler) Create(c *gin.Context) {
 		if err == nil {
 			existingUser := m.User{}
 			if handler.db.Where("email = ?",user.Email).First(&existingUser).RowsAffected < 1 {
-				encryptedPassword := encrypt([]byte(config.GetString("CRYPT_KEY")), "123")
+				encryptedPassword := encrypt([]byte(config.GetString("CRYPT_KEY")), user.Password)
 				user.Password = encryptedPassword
 				result := handler.db.Create(&user)
 				if result.RowsAffected > 0 {
@@ -85,7 +85,6 @@ func (handler UserHandler) Auth(c *gin.Context) {
 					authenticatedUser.Status = user.Status
 					authenticatedUser.Email = user.Email
 					authenticatedUser.Address = user.Address
-					authenticatedUser.IsPasswordDefault = user.IsPasswordDefault
 					authenticatedUser.UserLevel = user.UserLevel
 					authenticatedUser.CreatedAt = user.CreatedAt
 					authenticatedUser.UpdatedAt = user.UpdatedAt
@@ -114,7 +113,6 @@ func (handler UserHandler) ChangePassword (c *gin.Context) {
 			if decryptedPassword == oldPassword {
 	 			encryptedPassword := encrypt([]byte(config.GetString("CRYPT_KEY")), newPassword)
 				user.Password = encryptedPassword
-				user.IsPasswordDefault = false
 				result := handler.db.Save(&user)
 				if result.RowsAffected > 0 {
 					c.JSON(http.StatusOK,"Password successfully changed!")

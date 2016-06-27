@@ -38,6 +38,11 @@ func LoadAPIRoutes(r *gin.Engine, db *gorm.DB, pusher *pusher.Client) {
 	private.GET("/news", newsHandler.Index)
 	private.POST("/news", newsHandler.Create)
 
+	//manage gallery
+	galleryHandler := h.NewGalleryHandler(db)
+	private.POST("/gallery", galleryHandler.Create)
+	private.GET("/galleries", galleryHandler.Index)
+
 	var port = os.Getenv("PORT")
 	if port == "" {
 		port = "9000"

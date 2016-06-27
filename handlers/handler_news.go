@@ -20,9 +20,13 @@ func NewNewsHandler(db *gorm.DB, pusher *pusher.Client) *NewsHandler {
 
 //get all news
 func (handler NewsHandler) Index(c *gin.Context) {
-	news := []m.News{}
-	handler.db.Find(&news)
-	c.JSON(http.StatusOK,news)
+	if IsTokenValid(c) {
+		news := []m.News{}	
+		handler.db.Find(&news)
+		c.JSON(http.StatusOK,news)
+	} else {
+		respond(http.StatusForbidden,"Sorry, but your session has expired!",c,true)	
+	}
 	return
 }
 
