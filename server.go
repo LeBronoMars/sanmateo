@@ -47,7 +47,8 @@ func LoadAPIRoutes(r *gin.Engine, db *gorm.DB, pusher *pusher.Client) {
 	incidentsHandler := h.NewIncidentsHandler(db,pusher)
 	private.GET("/incidents", incidentsHandler.Index)
 	private.POST("/incident", incidentsHandler.Create)
-	private.GET("/incidents/:incident_id", incidentsHandler.Show)
+	private.GET("/incidents/show/:incident_id", incidentsHandler.Show)
+	private.GET("/incidents/latest/:incident_id", incidentsHandler.GetNewIncidents)
 
 	var port = os.Getenv("PORT")
 	if port == "" {

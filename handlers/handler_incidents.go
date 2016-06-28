@@ -99,7 +99,7 @@ func (handler IncidentsHandler) Show(c *gin.Context) {
 	if IsTokenValid(c) {
 		incident_id := c.Param("incident_id")
 		qry_incident := m.QryIncident{}
-		qry := handler.db.Where("incident_id = ? ", incident_id).First(&qry_incident)
+		qry := handler.db.Where("incident_id = ? AND status = ?",incident_id,"active").First(&qry_incident)
 		if qry.RowsAffected > 0 {
 			c.JSON(http.StatusCreated,qry_incident)
 		} else {
@@ -110,4 +110,22 @@ func (handler IncidentsHandler) Show(c *gin.Context) {
 	}
 	return
 }
+
+func (handler IncidentsHandler) GetNewIncidents(c *gin.Context) {
+	if IsTokenValid(c) {
+		incident_id := c.Param("incident_id")
+		qry_incident := []m.QryIncident{}
+		qry := handler.db.Where("incident_id >= ? AND status = ?",incident_id,"active").Find(&qry_incident)
+		if qry.RowsAffected > 0 {
+			c.JSON(http.StatusOK,qry_incident)
+		} else {
+			respond(http.StatusBadRequest,qry.Error.Error(),c,true)
+		}
+	} else {
+		respond(http.StatusForbidden,"Sorry, but your session has expired!",c,true)	
+	}
+	return
+}
+
+
 
