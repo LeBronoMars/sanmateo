@@ -78,7 +78,9 @@ func (handler IncidentsHandler) Create(c *gin.Context) {
 				qry := handler.db.Where("incident_id = ? ", incident.Id).First(&qry_incident)
 				if qry.RowsAffected > 0 {
 					//send push to channel
-					data := map[string]string{"action": "new incident reported " + qry_incident.ReporterName, "incident_id": strconv.Itoa(qry_incident.IncidentId)}
+					data := map[string]string{"action": "new incident", 
+					"id": strconv.Itoa(qry_incident.IncidentId),"title":"New incident reported by " + qry_incident.ReporterName,
+					"content": qry_incident.IncidentDescription}
 					handler.pusher.Trigger("all","san_mateo_event",data)
 					c.JSON(http.StatusCreated,qry_incident)
 				}
