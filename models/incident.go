@@ -8,8 +8,9 @@ type Incident struct {
 	Longitude float64 `json:"longitude" form:"longitude" binding:"required"`
 	Address string `json:"address" form:"address" binding:"required"`
 	Description string `json:"description" form:"description" binding:"required"` 
-	Status string `json:"status" form:"status"`
+	Status string `json:"status"`
 	IncidentType string `json:"incident_type" form:"incident_type" binding:"required"`
+	Remarks string `json:"remarks,omitempty" form:"remarks"`
 }
 
 func (i *Incident) BeforeCreate() (err error) {
