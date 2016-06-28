@@ -33,7 +33,9 @@ func (handler IncidentsHandler) Index(c *gin.Context) {
 		//start param exist
 		if startParamExist {
 			start,_ := strconv.Atoi(startParam)
-			query = query.Offset(start)
+			if start != 0 {
+				query = query.Offset(start)				
+			}
 		} 
 
 		//limit param exist
@@ -59,7 +61,7 @@ func (handler IncidentsHandler) Index(c *gin.Context) {
 			query = query.Where("status = ?",statusParam)
 		}
 
-		query.Order("created_at desc").Find(&incidents)
+		query.Order("incident_date_reported desc").Find(&incidents)
 		c.JSON(http.StatusOK,incidents)
 	} else {
 		respond(http.StatusForbidden,"Sorry, but your session has expired!",c,true)	
@@ -115,7 +117,7 @@ func (handler IncidentsHandler) GetNewIncidents(c *gin.Context) {
 	if IsTokenValid(c) {
 		incident_id := c.Param("incident_id")
 		qry_incident := []m.QryIncident{}
-		qry := handler.db.Where("incident_id >= ? AND status = ?",incident_id,"active").Order("created_at desc").Find(&qry_incident)
+		qry := handler.db.Where("incident_id > ? AND status = ?",incident_id,"active").Order("incident_date_reported desc").Find(&qry_incident)
 		if qry.RowsAffected > 0 {
 			c.JSON(http.StatusOK,qry_incident)
 		} else {
