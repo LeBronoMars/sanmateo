@@ -95,4 +95,19 @@ func (handler IncidentsHandler) Create(c *gin.Context) {
 	}
 }
 
+func (handler IncidentsHandler) Show(c *gin.Context) {
+	if IsTokenValid(c) {
+		incident_id := c.Param("incident_id")
+		qry_incident := m.QryIncident{}
+		qry := handler.db.Where("incident_id = ? ", incident_id).First(&qry_incident)
+		if qry.RowsAffected > 0 {
+			c.JSON(http.StatusCreated,qry_incident)
+		} else {
+			respond(http.StatusBadRequest,qry.Error.Error(),c,true)
+		}
+	} else {
+		respond(http.StatusForbidden,"Sorry, but your session has expired!",c,true)	
+	}
+	return
+}
 
