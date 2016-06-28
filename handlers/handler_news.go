@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/gorm"
@@ -37,7 +38,8 @@ func (handler NewsHandler) Create(c *gin.Context) {
 		if err == nil {
 			result := handler.db.Create(&news)
 			if result.RowsAffected > 0 {
-				SendPushNotification(handler.pusher,"all","news created",news.Title)
+				data := map[string]string{"action": "News from San Mateo Municipal", "news_id": strconv.Itoa(news.Id)}
+				handler.pusher.Trigger("all","created",data)
 				c.JSON(http.StatusCreated,news)
 			} else {
 				respond(http.StatusBadRequest,result.Error.Error(),c,true)

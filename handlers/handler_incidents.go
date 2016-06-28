@@ -21,12 +21,13 @@ func NewIncidentsHandler(db *gorm.DB, pusher *pusher.Client) *IncidentsHandler {
 
 func (handler IncidentsHandler) Index(c *gin.Context) {
 	if IsTokenValid(c) {
-		incidents := []m.Incident{}
+		incidents := []m.QryIncident{}
 		var query = handler.db
 
 		startParam,startParamExist := c.GetQuery("start")
 		limitParam,limitParamExist := c.GetQuery("limit")
 		typeParam,typeParamExist := c.GetQuery("incident_type")
+		statusParam,statusParamExist := c.GetQuery("status")
 		reportedByParam,reportedByParamExist := c.GetQuery("reported_by")
 
 		//start param exist
@@ -50,7 +51,12 @@ func (handler IncidentsHandler) Index(c *gin.Context) {
 
 		//reported by param exist
 		if reportedByParamExist {
-			query = query.Where("reported_by = ?",reportedByParam)
+			query = query.Where("reporter_id = ?",reportedByParam)
+		}
+
+		//status param exist
+		if statusParamExist {
+			query = query.Where("status = ?",statusParam)
 		}
 
 		query.Find(&incidents)
@@ -68,7 +74,14 @@ func (handler IncidentsHandler) Create(c *gin.Context) {
 		if err == nil {	
 			result := handler.db.Create(&incident)
 			if result.RowsAffected > 0 {
-				c.JSON(http.StatusCreated,incident)
+				qry_incident := m.QryIncident{}
+				qry := handler.db.Where("incident_id = ? ", incident.Id).First(&qry_incident)
+				if qry.RowsAffected > 0 {
+					//send push to channel
+					data := map[string]string{"action": "new incident reported " + qry_incident.ReporterName, "incident_id": strconv.Itoa(qry_incident.IncidentId)}
+					handler.pusher.Trigger("all","created",data)
+					c.JSON(http.StatusCreated,qry_incident)
+				}
 			} else {
 				respond(http.StatusBadRequest,result.Error.Error(),c,true)
 			}
