@@ -118,7 +118,7 @@ func (handler IncidentsHandler) GetNewIncidents(c *gin.Context) {
 		incident_id := c.Param("incident_id")
 		qry_incident := []m.QryIncident{}
 		qry := handler.db.Where("incident_id > ? AND status = ?",incident_id,"active").Order("incident_date_reported desc").Find(&qry_incident)
-		if qry.RowsAffected > 0 {
+		if qry.Error == nil {
 			c.JSON(http.StatusOK,qry_incident)
 		} else {
 			respond(http.StatusBadRequest,qry.Error.Error(),c,true)
