@@ -52,7 +52,7 @@ func LoadAPIRoutes(r *gin.Engine, db *gorm.DB, pusher *pusher.Client) {
 
 	//manage incident reporting
 	incidentReportsHandler := h.NewIncidentReportHandler(db,pusher)
-	incidentReportsHandler.POST("/report", incidentReportsHandler.Create)
+	private.POST("/report", incidentReportsHandler.Create)
 
 	var port = os.Getenv("PORT")
 	if port == "" {
@@ -89,7 +89,8 @@ func InitDB() *gorm.DB {
 	}
 	_db.DB()
 	_db.LogMode(true)
-	_db.Set("gorm:table_options", "ENGINE=InnoDB").AutoMigrate(&m.User{},&m.News{},&m.Gallery{},&m.Incident{})
+	_db.Set("gorm:table_options", "ENGINE=InnoDB").AutoMigrate(&m.User{},&m.News{},&m.Gallery{},
+																&m.Incident{},&m.IncidentReport{})
 	return &_db
 }
 
