@@ -38,7 +38,20 @@ func (handler UserHandler) Create(c *gin.Context) {
 				user.Password = encryptedPassword
 				result := handler.db.Create(&user)
 				if result.RowsAffected > 0 {
-					c.JSON(http.StatusCreated, user)
+					authenticatedUser := m.AuthenticatedUser{}
+					authenticatedUser.Id = user.Id
+					authenticatedUser.FirstName = user.FirstName
+					authenticatedUser.LastName = user.LastName
+					authenticatedUser.Status = user.Status
+					authenticatedUser.Email = user.Email
+					authenticatedUser.Address = user.Address
+					authenticatedUser.UserLevel = user.UserLevel
+					authenticatedUser.CreatedAt = user.CreatedAt
+					authenticatedUser.UpdatedAt = user.UpdatedAt
+					authenticatedUser.Gender = user.Gender
+					authenticatedUser.PicUrl = user.PicUrl
+					authenticatedUser.Token = generateJWT(user.Email)
+					c.JSON(http.StatusCreated, authenticatedUser)
 				} else {
 					respond(http.StatusBadRequest,result.Error.Error(),c,true)
 				}

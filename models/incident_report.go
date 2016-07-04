@@ -6,7 +6,7 @@ type IncidentReport struct {
 	IncidentId int `json:"incident_id" form:"incident_id" binding:"required"`
 	PostedBy int `json:"posted_by" form:"posted_by" binding:"required"`
 	ReportedBy int `json:"reported_by" form:"reported_by" binding:"required"`
-	Status string `json:"status" form:"status"`
+	Status string `json:"status"`
 }
 
 func (i *IncidentReport) BeforeCreate() (err error) {

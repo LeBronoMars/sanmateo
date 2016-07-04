@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"net/http"
-	"strconv"
 
 	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/gorm"
@@ -25,22 +24,26 @@ func (handler IncidentReportHandler) Create(c *gin.Context) {
 		var incidentReport m.IncidentReport
 		err := c.Bind(&incidentReport)
 		if err == nil {	
-			incident_id,_ := strconv.Atoi(c.PostForm("incident_id"))
-			reported_by,_ := strconv.Atoi(c.PostForm("reported_by"))
-
 			incidentRecord := m.QryIncident{}
-			queryForIncidentRecord := handler.db.Where("incident_id = ?",incident_id).First(&incidentRecord)
+			queryForIncidentRecord := handler.db.Where("incident_id = ?",incidentReport.IncidentId).First(&incidentRecord)
 
 			if queryForIncidentRecord.RowsAffected > 0 {
 				reportedByUser := m.User{}
-				queryForReportedByUser := handler.db.Where("id = ?",reported_by).First(&reportedByUser)
+				queryForReportedByUser := handler.db.Where("id = ?",incidentReport.ReportedBy).First(&reportedByUser)
+
 				if queryForReportedByUser.RowsAffected > 0 {
-					resut := handler.db.Create(incidentReport)
-					if resut.RowsAffected > 0 {
-						c.JSON(http.StatusCreated,incidentReport)
+					result := handler.db.Create(&incidentReport)
+					if result.RowsAffected > 0 {
+						qry_incident_report := m.QryIncidentReports{}
+						res := handler.db.Where("incident_id = ?",incidentReport.Id).First(&qry_incident_report)
+						if res.RowsAffected > 0 {
+							c.JSON(http.StatusCreated,qry_incident_report)
+						} else {
+							respond(http.StatusBadRequest,"NOT FOUND",c,true)
+						}
 						//send push to channel
 						//data := map[string]string{"action": "new incident report","reported_by"}
-						//handler.pusher.Trigger("all","san_mateo_event",data)
+						//handler.pusher.Trigger("admin","san_mateo_event",data)
 					}					
 				} else {
 					respond(http.StatusBadRequest,"Reportee record not found!",c,true)
