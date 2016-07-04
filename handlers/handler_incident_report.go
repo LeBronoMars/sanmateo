@@ -44,7 +44,7 @@ func (handler IncidentReportHandler) Create(c *gin.Context) {
 							handler.pusher.Trigger("admin","san_mateo_event",data)
 							c.JSON(http.StatusCreated,qry)
 						} else {
-							respond(http.StatusBadRequest,"NOT FOUND",c,true)
+							respond(http.StatusBadRequest,res.Error.Error(),c,true)
 						}
 					}					
 				} else {
@@ -60,4 +60,18 @@ func (handler IncidentReportHandler) Create(c *gin.Context) {
 		respond(http.StatusForbidden,"Sorry, but your session has expired!",c,true)	
 	}
 	return
+}
+
+func (handler IncidentReportHandler) GetPendingReviews(c *gin.Context) {
+	if IsTokenValid(c) {
+		qry := []m.QryIncidentReports{}
+		res := handler.db.Where("report_status = ?","for review").Find(&qry)
+		if res.RowsAffected > 0 {
+			c.JSON(http.StatusOK,qry)
+		} else {
+			respond(http.StatusBadRequest,res.Error.Error(),c,true)
+		}
+	} else {
+		respond(http.StatusForbidden,"Sorry, but your session has expired!",c,true)	
+	}
 }

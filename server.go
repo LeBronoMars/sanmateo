@@ -53,6 +53,7 @@ func LoadAPIRoutes(r *gin.Engine, db *gorm.DB, pusher *pusher.Client) {
 	//manage incident reporting
 	incidentReportsHandler := h.NewIncidentReportHandler(db,pusher)
 	private.POST("/report", incidentReportsHandler.Create)
+	private.GET("/report/pending_reviews", incidentReportsHandler.GetPendingReviews)
 
 	var port = os.Getenv("PORT")
 	if port == "" {
