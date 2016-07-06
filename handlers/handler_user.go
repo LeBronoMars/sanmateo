@@ -3,6 +3,7 @@ package handlers
 import (
 	"net/http"
     "strings"
+    "strconv"
 
 	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/gorm"
@@ -134,6 +135,29 @@ func (handler UserHandler) ChangePassword (c *gin.Context) {
 				}
 			} else {
 				respond(http.StatusBadRequest,"Invalid old password",c,true)
+			}
+		} else {
+			respond(http.StatusBadRequest,"User not found!",c,true)
+		}
+	} else {
+		respond(http.StatusBadRequest,"Sorry, but your session has expired!",c,true)	
+	}
+	return
+}
+
+func (handler UserHandler) ChangeProfilePic(c *gin.Context) {
+	if IsTokenValid(c) {
+		user_id,_ := strconv.Atoi(c.PostForm("user_id"))
+		
+		user := m.User{}	
+		qry := handler.db.Where("id = ?",user_id).First(&user)
+		if qry.RowsAffected > 0 {
+			user.PicUrl = c.PostForm("new_pic_url")
+			res := handler.db.Save(&user)
+			if res.RowsAffected > 0 {
+				c.JSON(http.StatusOK,"Profile picture successfully changed!")
+			} else {
+				respond(http.StatusBadRequest,res.Error.Error(),c,true)	
 			}
 		} else {
 			respond(http.StatusBadRequest,"User not found!",c,true)
