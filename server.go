@@ -52,6 +52,7 @@ func LoadAPIRoutes(r *gin.Engine, db *gorm.DB, pusher *pusher.Client) {
 	private.POST("/incident", incidentsHandler.Create)
 	private.GET("/incidents/show/:incident_id", incidentsHandler.Show)
 	private.GET("/incidents/latest/:incident_id", incidentsHandler.GetNewIncidents)
+	private.PUT("/incidents/block/:incident_id", incidentsHandler.BlockIncidentReport)
 
 	//manage incident reporting
 	incidentReportsHandler := h.NewIncidentReportHandler(db,pusher)

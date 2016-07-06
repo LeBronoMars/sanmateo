@@ -129,5 +129,32 @@ func (handler IncidentsHandler) GetNewIncidents(c *gin.Context) {
 	return
 }
 
+func (handler IncidentsHandler) BlockIncidentReport(c *gin.Context) {
+	if IsTokenValid(c) {
+		incident_id := c.Param("incident_id")
+		remarks := c.PostForm("remarks")
+		incident := m.Incident{}
+		qry := handler.db.Where("id = ? AND status = ?",incident_id,"active").First(&incident)
+		if qry.Error == nil {
+			incident.Status = "blocked"
+			incident.Remarks = remarks
+			res := handler.db.Save(&incident)
+			if res.RowsAffected > 0 {
+				//send push to channel
+				data := map[string]string{"action": "block report","id": strconv.Itoa(incident.Id),
+							"reported_by":strconv.Itoa(incident.ReportedBy),"remarks":remarks}
+				handler.pusher.Trigger("all","san_mateo_event",data)
+				c.JSON(http.StatusOK,"Incident report successfully blocked")
+			} else {
+				respond(http.StatusBadRequest,res.Error.Error(),c,true)
+			}
+		} else {
+			respond(http.StatusBadRequest,qry.Error.Error(),c,true)
+		}
+	} else {
+		respond(http.StatusForbidden,"Sorry, but your session has expired!",c,true)	
+	}
+}
+
 
 
