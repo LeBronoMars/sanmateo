@@ -167,3 +167,19 @@ func (handler UserHandler) ChangeProfilePic(c *gin.Context) {
 	}
 	return
 }
+
+func (handler UserHandler) GetUserById(c *gin.Context) {
+	if IsTokenValid(c) {
+		user_id := c.Param("user_id")
+		user := m.User{}	
+		res := handler.db.Where("id = ?",user_id).First(&user)
+		if res.RowsAffected > 0 {
+			c.JSON(http.StatusOK,user)
+		} else {
+			respond(http.StatusBadRequest,"User not found!",c,true)
+		}
+	} else {
+		respond(http.StatusBadRequest,"Sorry, but your session has expired!",c,true)	
+	}
+	return
+}

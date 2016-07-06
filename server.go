@@ -34,6 +34,7 @@ func LoadAPIRoutes(r *gin.Engine, db *gorm.DB, pusher *pusher.Client) {
 	private.GET("/users", userHandler.Index)
 	private.PUT("/change_password", userHandler.ChangePassword)
 	private.PUT("/change_profile_pic", userHandler.ChangeProfilePic)
+	private.GET("/users/:user_id", userHandler.GetUserById)
 
 	//manage news
 	newsHandler := h.NewNewsHandler(db,pusher)
