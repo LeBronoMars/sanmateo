@@ -147,3 +147,16 @@ func SendPushNotification(pusher *pusher.Client, channel string, event string, m
 	data := map[string]string{"message": message}
 	pusher.Trigger(channel,event,data)
 }
+
+func GetStartOfDay(t time.Time) time.Time {
+    year, month, day := t.Date()
+    return time.Date(year, month, day, 0, 0, 0, 0, t.Location())
+}
+
+func GetEndOfDay(t time.Time) time.Time {
+    year, month, day := t.Date()
+    return time.Date(year, month, day, 23, 59, 59, 0, t.Location())
+}
+
+
+

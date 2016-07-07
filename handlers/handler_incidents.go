@@ -144,6 +144,8 @@ func (handler IncidentsHandler) BlockIncidentReport(c *gin.Context) {
 				data := map[string]string{"action": "block report","id": strconv.Itoa(incident.Id),
 							"reported_by":strconv.Itoa(incident.ReportedBy),"remarks":remarks}
 				handler.pusher.Trigger("all","san_mateo_event",data)
+				qryIncident := m.QryIncident{}
+				handler.db.Where("incident_id = ?",incident.Id).First(&qryIncident)
 				c.JSON(http.StatusOK,"Incident report successfully blocked")
 			} else {
 				respond(http.StatusBadRequest,res.Error.Error(),c,true)

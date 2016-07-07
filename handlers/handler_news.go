@@ -2,6 +2,8 @@ package handlers
 
 import (
 	"net/http"
+	"time"
+	"fmt"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
@@ -23,7 +25,50 @@ func NewNewsHandler(db *gorm.DB, pusher *pusher.Client) *NewsHandler {
 func (handler NewsHandler) Index(c *gin.Context) {
 	if IsTokenValid(c) {
 		news := []m.News{}	
-		handler.db.Find(&news)
+		var query = handler.db
+
+		startParam,startParamExist := c.GetQuery("start")
+		limitParam,limitParamExist := c.GetQuery("limit")
+		statusParam,statusParamExist := c.GetQuery("status")
+		whenParam,whenParamExist := c.GetQuery("when")
+
+		//start param exist
+		if startParamExist {
+			start,_ := strconv.Atoi(startParam)
+			if start != 0 {
+				query = query.Offset(start)				
+			}
+		} 
+
+		//limit param exist
+		if limitParamExist {
+			limit,_ := strconv.Atoi(limitParam)
+			query = query.Limit(limit)
+		} else {
+			query = query.Limit(10)
+		}
+
+		//status param exist
+		if statusParamExist {
+			query = query.Where("status = ?",statusParam)
+		}
+
+		//when param exist
+		if whenParamExist {
+			asia, _ := time.LoadLocation("Asia/Manila")
+			now := time.Now().In(asia)				
+			startOfDay := GetStartOfDay(now)
+			if whenParam == "today" {
+				endOfDay := GetEndOfDay(now)
+				fmt.Printf("\nStart Of Day ----> %v",startOfDay)
+				fmt.Printf("\nEnd of Day ----> %v",endOfDay)
+				query = query.Where("created_at between ? AND ?",startOfDay,endOfDay)
+			} else if whenParam == "previous" {
+				query = query.Where("created_at < ?",startOfDay)
+			}
+		}
+
+		query.Order("created_at desc").Find(&news)
 		c.JSON(http.StatusOK,news)
 	} else {
 		respond(http.StatusForbidden,"Sorry, but your session has expired!",c,true)	
@@ -52,4 +97,5 @@ func (handler NewsHandler) Create(c *gin.Context) {
 	}
 	return
 }
+
 
