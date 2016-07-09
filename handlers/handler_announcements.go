@@ -78,4 +78,20 @@ func (handler AnnouncementHandler) Create(c *gin.Context) {
 	return
 }
 
+func (handler AnnouncementHandler) GetAnnouncementById(c *gin.Context) {
+	if IsTokenValid(c) {
+		id := c.Param("id")
+		announcement := m.Announcement{}
+		result := handler.db.Where("id = ?",id).First(&announcement)
+		if result.RowsAffected > 0 {
+			c.JSON(http.StatusOK, announcement)
+		} else {
+			respond(http.StatusBadRequest,result.Error.Error(),c,true)
+		}	
+	} else {
+		respond(http.StatusForbidden,"Sorry, but your session has expired!",c,true)	
+	}
+	return
+}
+
 
