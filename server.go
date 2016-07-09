@@ -59,6 +59,11 @@ func LoadAPIRoutes(r *gin.Engine, db *gorm.DB, pusher *pusher.Client) {
 	private.POST("/report", incidentReportsHandler.Create)
 	private.GET("/report/pending_reviews", incidentReportsHandler.GetPendingReviews)
 
+	//manage announcements
+	announcementHandler := h.NewAnnouncementHandler(db,pusher)
+	private.GET("/announcements", announcementHandler.Index)
+	private.POST("/announcements", announcementHandler.Create)
+
 	var port = os.Getenv("PORT")
 	if port == "" {
 		port = "9000"
@@ -95,7 +100,8 @@ func InitDB() *gorm.DB {
 	_db.DB()
 	_db.LogMode(true)
 	_db.Set("gorm:table_options", "ENGINE=InnoDB").AutoMigrate(&m.User{},&m.News{},&m.Gallery{},&m.Incident{},
-																&m.IncidentReport{},&m.Notification{})
+																&m.IncidentReport{},&m.Notification{},
+																&m.Announcement{})
 	return &_db
 }
 
