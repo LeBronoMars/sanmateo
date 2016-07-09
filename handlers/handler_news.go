@@ -83,8 +83,9 @@ func (handler NewsHandler) Create(c *gin.Context) {
 		if err == nil {
 			result := handler.db.Create(&news)
 			if result.RowsAffected > 0 {
-				data := map[string]string{"action": "News from San Mateo Municipal", "news_id": strconv.Itoa(news.Id)}
-				handler.pusher.Trigger("all","san_mateo_event",data)
+				data := map[string]string{"action":"news created","title" : "News from San Mateo Municipal",
+											"reported_by" : news.ReportedBy, "id": strconv.Itoa(news.Id)}
+				handler.pusher.Trigger("client","san_mateo_event",data)
 				c.JSON(http.StatusCreated,news)
 			} else {
 				respond(http.StatusBadRequest,result.Error.Error(),c,true)

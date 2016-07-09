@@ -83,7 +83,7 @@ func (handler IncidentsHandler) Create(c *gin.Context) {
 					data := map[string]string{"action": "new incident", 
 					"id": strconv.Itoa(qry_incident.IncidentId),"title":"New incident reported by " + qry_incident.ReporterName,
 					"content": qry_incident.IncidentDescription}
-					handler.pusher.Trigger("all","san_mateo_event",data)
+					handler.pusher.Trigger("client","san_mateo_event",data)
 					c.JSON(http.StatusCreated,qry_incident)
 				}
 			} else {
@@ -143,7 +143,7 @@ func (handler IncidentsHandler) BlockIncidentReport(c *gin.Context) {
 				//send push to channel
 				data := map[string]string{"action": "block report","id": strconv.Itoa(incident.Id),
 							"reported_by":strconv.Itoa(incident.ReportedBy),"remarks":remarks}
-				handler.pusher.Trigger("all","san_mateo_event",data)
+				handler.pusher.Trigger("clients","san_mateo_event",data)
 				qryIncident := m.QryIncident{}
 				handler.db.Where("incident_id = ?",incident.Id).First(&qryIncident)
 				c.JSON(http.StatusOK,"Incident report successfully blocked")
