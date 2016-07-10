@@ -64,6 +64,7 @@ func LoadAPIRoutes(r *gin.Engine, db *gorm.DB, pusher *pusher.Client) {
 	private.GET("/announcements", announcementHandler.Index)
 	private.POST("/announcements", announcementHandler.Create)
 	private.GET("/announcements/:id", announcementHandler.GetAnnouncementById)
+	private.GET("/announcements/latest/:id", announcementHandler.GetNewAnnouncements)
 
 	var port = os.Getenv("PORT")
 	if port == "" {
