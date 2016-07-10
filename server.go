@@ -63,8 +63,13 @@ func LoadAPIRoutes(r *gin.Engine, db *gorm.DB, pusher *pusher.Client) {
 	announcementHandler := h.NewAnnouncementHandler(db,pusher)
 	private.GET("/announcements", announcementHandler.Index)
 	private.POST("/announcements", announcementHandler.Create)
-	private.GET("/announcements/:id", announcementHandler.GetAnnouncementById)
+	private.GET("/announcements/show/:id", announcementHandler.GetAnnouncementById)
 	private.GET("/announcements/latest/:id", announcementHandler.GetNewAnnouncements)
+
+	//manage water level monitoring
+	waterLevelHandler := h.NewWaterLevelHandler(db,pusher)
+	private.GET("/water_level", waterLevelHandler.Index)
+	private.POST("/water_level", waterLevelHandler.Create)
 
 	var port = os.Getenv("PORT")
 	if port == "" {
@@ -103,7 +108,7 @@ func InitDB() *gorm.DB {
 	_db.LogMode(true)
 	_db.Set("gorm:table_options", "ENGINE=InnoDB").AutoMigrate(&m.User{},&m.News{},&m.Gallery{},&m.Incident{},
 																&m.IncidentReport{},&m.Notification{},
-																&m.Announcement{})
+																&m.Announcement{},&m.WaterLevel{})
 	return &_db
 }
 
