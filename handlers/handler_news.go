@@ -99,4 +99,20 @@ func (handler NewsHandler) Create(c *gin.Context) {
 	return
 }
 
+func (handler NewsHandler) GetNewsById(c *gin.Context) {
+	if IsTokenValid(c) {
+		id := c.Param("id")
+		news := m.News{}
+		result := handler.db.Where("id = ?",id).First(&news)
+		if result.RowsAffected > 0 {
+			c.JSON(http.StatusOK,news)
+		} else {
+			respond(http.StatusBadRequest,result.Error.Error(),c,true)
+		}
+	} else {
+		respond(http.StatusForbidden,"Sorry, but your session has expired!",c,true)	
+	}
+	return
+}
+
 

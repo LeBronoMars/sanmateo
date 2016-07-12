@@ -45,7 +45,7 @@ func (handler WaterLevelHandler) Index(c *gin.Context) {
 		}
 
 		query.Order("created_at desc").Find(&waterLevels)
-		c.JSON(http.StatusOK,announcements)
+		c.JSON(http.StatusOK,waterLevels)
 	} else {
 		respond(http.StatusForbidden,"Sorry, but your session has expired!",c,true)	
 	}
