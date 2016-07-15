@@ -129,7 +129,7 @@ func (handler UserHandler) ChangePassword (c *gin.Context) {
 				user.Password = encryptedPassword
 				result := handler.db.Save(&user)
 				if result.RowsAffected > 0 {
-					c.JSON(http.StatusOK,"Password successfully changed!")
+					respond(http.StatusOK,"Password successfully changed!",c,false)
 				} else {
 					respond(http.StatusBadRequest,"Unable to change password",c,true)
 				}

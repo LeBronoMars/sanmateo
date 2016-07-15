@@ -78,4 +78,18 @@ func (handler WaterLevelHandler) Create(c *gin.Context) {
 	return
 }
 
-
+func (handler WaterLevelHandler) GetNewWaterLevelNotifications(c *gin.Context) {
+	if IsTokenValid(c) {
+		id := c.Param("id")
+		qry_water_level := []m.WaterLevel{}
+		qry := handler.db.Where("id > ?",id).Order("created_at desc").Find(&qry_water_level)
+		if qry.Error == nil {
+			c.JSON(http.StatusOK,qry_water_level)
+		} else {
+			respond(http.StatusBadRequest,qry.Error.Error(),c,true)
+		}
+	} else {
+		respond(http.StatusForbidden,"Sorry, but your session has expired!",c,true)	
+	}
+	return
+}
