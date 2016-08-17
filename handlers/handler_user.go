@@ -155,7 +155,7 @@ func (handler UserHandler) ChangeProfilePic(c *gin.Context) {
 			user.PicUrl = c.PostForm("new_pic_url")
 			res := handler.db.Save(&user)
 			if res.RowsAffected > 0 {
-				respond(http.StatusOK,"Profile picture successfully changed!",c,false)
+				respond(http.StatusOK,user.PicUrl,c,false)
 			} else {
 				respond(http.StatusBadRequest,res.Error.Error(),c,true)	
 			}

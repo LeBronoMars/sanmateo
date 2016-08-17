@@ -79,11 +79,17 @@ func (handler IncidentsHandler) Create(c *gin.Context) {
 				qry_incident := m.QryIncident{}
 				qry := handler.db.Where("incident_id = ? ", incident.Id).First(&qry_incident)
 				if qry.RowsAffected > 0 {
-					//send push to channel
-					data := map[string]string{"action": "new incident", 
-					"id": strconv.Itoa(qry_incident.IncidentId),"title":"New incident reported by " + qry_incident.ReporterName,
-					"content": qry_incident.IncidentDescription}
-					handler.pusher.Trigger("client","san_mateo_event",data)
+					//send push notif to admins for approval
+					admins := []m.User{}
+					res := handler.db.Where("user_level = ?", "superadmin").Find(&admins)
+					if res.RowsAffected > 0 {
+						for _, admin := range admins {
+							data := map[string]string{"action": "incident_approval", 
+							"id": strconv.Itoa(qry_incident.IncidentId),"title":"New incident reported by " + qry_incident.ReporterName,
+							"content": qry_incident.IncidentDescription}
+							handler.pusher.Trigger(admin.Email,"san_mateo_event",data)
+						}	
+					}
 					c.JSON(http.StatusCreated,qry_incident)
 				}
 			} else {
