@@ -74,13 +74,7 @@ func LoadAPIRoutes(r *gin.Engine, db *gorm.DB, pusher *pusher.Client) {
 	private.GET("/water_level", waterLevelHandler.Index)
 	private.POST("/water_level", waterLevelHandler.Create)
 	private.GET("/water_level/latest/:id", waterLevelHandler.GetNewWaterLevelNotifications)
-
-	var port = os.Getenv("PORT")
-	if port == "" {
-		port = "9000"
-	}
-	fmt.Println("PORT ---> ",port)
-	r.Run(fmt.Sprintf(":%s", port))
+	r.Run(fmt.Sprintf(":%s", "8080"))
 }
 
 func Auth(secret string) gin.HandlerFunc {
@@ -113,7 +107,7 @@ func InitDB() *gorm.DB {
 	_db.Set("gorm:table_options", "ENGINE=InnoDB").AutoMigrate(&m.User{},&m.News{},&m.Gallery{},&m.Incident{},
 																&m.IncidentReport{},&m.Notification{},
 																&m.Announcement{},&m.WaterLevel{})
-	return &_db
+	return _db
 }
 
 func InitPusher() *pusher.Client {
