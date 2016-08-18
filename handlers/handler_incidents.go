@@ -140,7 +140,7 @@ func (handler IncidentsHandler) BlockIncidentReport(c *gin.Context) {
 		incident_id := c.Param("incident_id")
 		remarks := c.PostForm("remarks")
 		incident := m.Incident{}
-		qry := handler.db.Where("id = ? AND status = ?",incident_id,"active").First(&incident)
+		qry := handler.db.Where("id = ? AND status = ?",incident_id,"pending").First(&incident)
 		if qry.Error == nil {
 			incident.Status = "blocked"
 			incident.Remarks = remarks
@@ -152,7 +152,7 @@ func (handler IncidentsHandler) BlockIncidentReport(c *gin.Context) {
 				handler.pusher.Trigger("clients","san_mateo_event",data)
 				qryIncident := m.QryIncident{}
 				handler.db.Where("incident_id = ?",incident.Id).First(&qryIncident)
-				c.JSON(http.StatusOK,"Incident report successfully blocked")
+				c.JSON(http.StatusOK,qryIncident)
 			} else {
 				respond(http.StatusBadRequest,res.Error.Error(),c,true)
 			}
@@ -163,7 +163,6 @@ func (handler IncidentsHandler) BlockIncidentReport(c *gin.Context) {
 		respond(http.StatusForbidden,"Sorry, but your session has expired!",c,true)	
 	}
 }
-
 
 func (handler IncidentsHandler) ApproveIncidentReport(c *gin.Context) {
 	if IsTokenValid(c) {
@@ -184,6 +183,30 @@ func (handler IncidentsHandler) ApproveIncidentReport(c *gin.Context) {
 					handler.pusher.Trigger("client","san_mateo_event",data)
 					c.JSON(http.StatusOK,qry_incident)
 				}
+			} else {
+				respond(http.StatusBadRequest,res.Error.Error(),c,true)
+			}
+		} else {
+			respond(http.StatusBadRequest,qry.Error.Error(),c,true)
+		}
+	} else {
+		respond(http.StatusForbidden,"Sorry, but your session has expired!",c,true)	
+	}
+}
+
+func (handler IncidentsHandler) UnblockIncidentReport(c *gin.Context) {
+	if IsTokenValid(c) {
+		incident_id := c.Param("incident_id")
+		incident := m.Incident{}
+		qry := handler.db.Where("id = ? AND status = ?",incident_id,"blocked").First(&incident)
+		if qry.Error == nil {
+			incident.Status = "pending"
+			incident.Remarks = ""
+			res := handler.db.Save(&incident)
+			if res.RowsAffected > 0 {
+				qryIncident := m.QryIncident{}
+				handler.db.Where("incident_id = ?",incident.Id).First(&qryIncident)
+				c.JSON(http.StatusOK,qryIncident)
 			} else {
 				respond(http.StatusBadRequest,res.Error.Error(),c,true)
 			}
