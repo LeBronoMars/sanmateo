@@ -123,7 +123,7 @@ func (handler IncidentsHandler) GetNewIncidents(c *gin.Context) {
 	if IsTokenValid(c) {
 		incident_id := c.Param("incident_id")
 		qry_incident := []m.QryIncident{}
-		qry := handler.db.Where("incident_id > ? AND status = ?",incident_id,"active").Order("incident_date_reported desc").Find(&qry_incident)
+		qry := handler.db.Where("incident_id > ? AND (status = ? OR status = ?)",incident_id,"active","pending").Order("incident_date_reported desc").Find(&qry_incident)
 		if qry.Error == nil {
 			c.JSON(http.StatusOK,qry_incident)
 		} else {
@@ -164,5 +164,35 @@ func (handler IncidentsHandler) BlockIncidentReport(c *gin.Context) {
 	}
 }
 
+
+func (handler IncidentsHandler) ApproveIncidentReport(c *gin.Context) {
+	if IsTokenValid(c) {
+		incident_id := c.Param("incident_id")
+		incident := m.Incident{}
+		qry := handler.db.Where("id = ? AND status = ?",incident_id,"pending").First(&incident)
+		if qry.Error == nil {
+			incident.Status = "active"
+			res := handler.db.Save(&incident)
+			if res.RowsAffected > 0 {
+				qry_incident := m.QryIncident{}
+				qry := handler.db.Where("incident_id = ? ", incident.Id).First(&qry_incident)
+				
+				if qry.RowsAffected > 0 {
+					data := map[string]string{"action": "new incident", "id": strconv.Itoa(qry_incident.IncidentId),
+						"title":"New incident reported by " + qry_incident.ReporterName,
+						"content": qry_incident.IncidentDescription}
+					handler.pusher.Trigger("client","san_mateo_event",data)
+					c.JSON(http.StatusOK,qry_incident)
+				}
+			} else {
+				respond(http.StatusBadRequest,res.Error.Error(),c,true)
+			}
+		} else {
+			respond(http.StatusBadRequest,qry.Error.Error(),c,true)
+		}
+	} else {
+		respond(http.StatusForbidden,"Sorry, but your session has expired!",c,true)	
+	}
+}
 
 
