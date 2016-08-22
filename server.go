@@ -74,6 +74,10 @@ func LoadAPIRoutes(r *gin.Engine, db *gorm.DB, pusher *pusher.Client) {
 	private.GET("/water_level", waterLevelHandler.Index)
 	private.POST("/water_level", waterLevelHandler.Create)
 	private.GET("/water_level/latest/:id", waterLevelHandler.GetNewWaterLevelNotifications)
+
+	//manage official
+	officialHandler := h.NewOfficialHandler(db,pusher)
+	private.POST("/official", officialHandler.Create)
 	r.Run(fmt.Sprintf(":%s", "8080"))
 }
 
@@ -106,8 +110,8 @@ func InitDB() *gorm.DB {
 	_db.LogMode(true)
 	_db.Set("gorm:table_options", "ENGINE=InnoDB").AutoMigrate(&m.User{},&m.News{},&m.Gallery{},&m.Incident{},
 																&m.IncidentReport{},&m.Notification{},
-																&m.Announcement{},&m.WaterLevel{})
-	return _db
+																&m.Announcement{},&m.WaterLevel{},&m.Official{})
+	return &_db
 }
 
 func InitPusher() *pusher.Client {
@@ -124,7 +128,7 @@ func GetPort() string {
     var port = os.Getenv("PORT")
     // Set a default port if there is nothing in the environment
     if port == "" {
-        port = "8000"
+        port = "9000"
         fmt.Println("INFO: No PORT environment variable detected, defaulting to " + port)
     }
     fmt.Println("port -----> ", port)
