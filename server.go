@@ -77,7 +77,9 @@ func LoadAPIRoutes(r *gin.Engine, db *gorm.DB, pusher *pusher.Client) {
 
 	//manage official
 	officialHandler := h.NewOfficialHandler(db,pusher)
+	private.GET("/officials", officialHandler.Index)
 	private.POST("/official", officialHandler.Create)
+	private.PUT("/officials/:id", officialHandler.UpdateOfficialRecord)
 	r.Run(fmt.Sprintf(":%s", "8080"))
 }
 
