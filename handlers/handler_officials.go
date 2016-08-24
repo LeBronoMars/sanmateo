@@ -42,8 +42,12 @@ func (handler OfficialHandler) Create(c *gin.Context) {
 			if (handler.db.Where("zindex = ?",official.Zindex).First(&existingIndexRecord).RowsAffected > 0) {
 				respond(http.StatusBadRequest,"zindex already used!",c,true)
 			} else {
-				handler.db.Create(&official)
-				c.JSON(http.StatusCreated, official)			
+				result := handler.db.Create(&official)
+				if result.RowsAffected > 0 {
+					c.JSON(http.StatusCreated, official)								
+				} else {
+					respond(http.StatusBadRequest,result.Error.Error(),c,true)
+				}
 			}
 		} else {
 			respond(http.StatusBadRequest,err.Error(),c,true)
