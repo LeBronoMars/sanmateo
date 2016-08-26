@@ -74,6 +74,7 @@ func LoadAPIRoutes(r *gin.Engine, db *gorm.DB, pusher *pusher.Client) {
 	private.GET("/water_level", waterLevelHandler.Index)
 	private.POST("/water_level", waterLevelHandler.Create)
 	private.GET("/water_level/latest/:id", waterLevelHandler.GetNewWaterLevelNotifications)
+	private.GET("/water_level/filter", waterLevelHandler.GetWaterLevelByArea)
 
 	//manage official
 	officialHandler := h.NewOfficialHandler(db,pusher)

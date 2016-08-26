@@ -2,6 +2,7 @@ package models
 
 type WaterLevel struct {
 	BaseModel
+	Area string `json:"area" form:"area" binding:"required"`
 	Level float64 `json:"water_level" form:"water_level" binding:"required"`
 	Alert string `json:"alert"`
 }
