@@ -134,7 +134,7 @@ CREATE TABLE `incidents` (
 
 LOCK TABLES `incidents` WRITE;
 /*!40000 ALTER TABLE `incidents` DISABLE KEYS */;
-INSERT INTO `incidents` VALUES (26,'2016-08-18 09:44:44','2016-08-18 09:52:11',NULL,'http://newsinfo.inquirer.net/files/2015/12/sm-megamall-1.jpg',8,14.58576,121.057545,'Hagonoy','TO MEEE','active','Environmental Report','');
+INSERT INTO `incidents` VALUES (26,'2016-08-18 09:44:44','2016-08-22 03:09:34',NULL,'http://newsinfo.inquirer.net/files/2015/12/sm-megamall-1.jpg',8,14.58576,121.057545,'Hagonoy','TO MEEE','active','Environmental Report','');
 /*!40000 ALTER TABLE `incidents` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -197,6 +197,40 @@ CREATE TABLE `notifications` (
 LOCK TABLES `notifications` WRITE;
 /*!40000 ALTER TABLE `notifications` DISABLE KEYS */;
 /*!40000 ALTER TABLE `notifications` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `officials`
+--
+
+DROP TABLE IF EXISTS `officials`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `officials` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  `deleted_at` timestamp NULL DEFAULT NULL,
+  `first_name` varchar(255) DEFAULT NULL,
+  `last_name` varchar(255) DEFAULT NULL,
+  `nick_name` varchar(255) DEFAULT NULL,
+  `position` varchar(255) DEFAULT NULL,
+  `zindex` int(11) DEFAULT NULL,
+  `background` longtext,
+  `pic` varchar(255) DEFAULT NULL,
+  `status` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `officials`
+--
+
+LOCK TABLES `officials` WRITE;
+/*!40000 ALTER TABLE `officials` DISABLE KEYS */;
+INSERT INTO `officials` VALUES (1,'2016-08-27 03:31:52','2016-08-27 03:31:52',NULL,'Rodrigo','Duterte','Digong','Mayor',1,'Kill Them All','https://s3-us-west-1.amazonaws.com/sanmateoprofileapp/officials/official_profile_pic_Sat%2C%202016-08-27%2011%3A31%20AM.jpg','active'),(2,'2016-08-27 03:32:44','2016-08-27 03:32:44',NULL,'Ronald','Dela Rosa','Bato','Vice Mayor',2,'Shoot Them All','https://s3-us-west-1.amazonaws.com/sanmateoprofileapp/officials/official_profile_pic_Sat%2C%202016-08-27%2011%3A32%20AM.jpg','active'),(3,'2016-09-01 13:12:17','2016-09-01 13:12:17',NULL,'James','Yap','Big Game','Shooting Guard',3,'Grand Slam','https://s3-us-west-1.amazonaws.com/sanmateoprofileapp/officials/official_profile_pic_Thu%2C%202016-09-01%2009%3A11%20PM.jpg','active');
+/*!40000 ALTER TABLE `officials` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -294,7 +328,7 @@ CREATE TABLE `users` (
 
 LOCK TABLES `users` WRITE;
 /*!40000 ALTER TABLE `users` DISABLE KEYS */;
-INSERT INTO `users` VALUES (1,'2016-06-23 14:39:30','2016-07-19 14:20:24',NULL,'Russel','Bulanon','rsbulanon@gmail.com','Hagonoy, Bulacan','09321622825','active','superadmin','3uILg5vjcTyFbGIP2cY1tLPaKQ==',1,'Male','http://vignette1.wikia.nocookie.net/logopedia/images/b/bb/Purefoods.jpg/revision/latest?cb=20150506051734'),(2,'2016-06-30 15:47:24','2016-06-30 15:47:24',NULL,'Jovel','Quiamco','jvlquiamco@gmail.com','Hagonoy, Bulacan','09321622825','active','superadmin','72o5JSmZkX7N_xtDt6vPOLDJQqo=',NULL,'Male','http://www.gravatar.com/avatar/2ae05db25b0a42667f488e7763c51c46?d=identicon'),(3,'2016-06-30 15:52:02','2016-06-30 15:52:02',NULL,'JovsQ','Quiamco','dynamic.jvquiamco@gmail.com','Hagonoy, Bulacan','09321622825','active','superadmin','DJ7JeEi9uhSNC2FGCkSO1hR5-RU=',NULL,'Male','http://www.gravatar.com/avatar/46aa3bb21ff083c894ea64e0ded1ef77?d=identicon'),(4,'2016-07-04 12:04:58','2016-07-04 12:04:58',NULL,'Ned','Flanders','nedflanders@gmail.com','Malolos, Bulacan','09321622825','active','superadmin','CExyAJehUZY2SsJGlRQtf4zBaw==',NULL,'Male','http://www.gravatar.com/avatar/b658ab705b1f30f149666a6e21fbe6ec?d=identicon'),(5,'2016-07-06 02:43:15','2016-07-06 02:58:57',NULL,'Maud','Flanders','maud@flanders.com','Hagonoy, Bulacan','09321622825','active','Regular User','gIxjuUEZv4-TSHqmJCLWHFpXwA==',NULL,'Female','http://www.gravatar.com/avatar/63921e20d866864e1b42aaa973399e8f?d=identicon'),(6,'2016-07-06 03:09:10','2016-07-06 03:09:10',NULL,'Jovs','Quiamco','jvquiamco@dynamicobjx.com','Val','09123456789','active','Regular User','ozVWginfwOIZn9wkC0VDZGIJOC8=',NULL,'Male','http://www.gravatar.com/avatar/e3d9263537be9a38adf3ab2d4d8f7547?d=identicon'),(7,'2016-07-14 16:04:55','2016-07-14 17:05:26',NULL,'Aa','Aa','aa@gmail.com','Aa','Aa','active','Regular User','6eQn8egLIV-GIb4U8v5EokJb',NULL,'Male','http://www.gravatar.com/avatar/3979576bcdcbd166d005a5b225e1bc52?d=identicon'),(8,'2016-07-18 11:27:27','2016-07-19 15:08:30',NULL,'Lebron','James','lebron@gmail.com','San Pedro Hagonoy, Bulacan','09321622825','active','Regular User','QXH9vu9sQ4C3EXDbdaboPmqdTw==',NULL,'Male','https://s3-us-west-1.amazonaws.com/sanmateoprofileapp/profilepics/incident_image_20160719_230818.jpg');
+INSERT INTO `users` VALUES (1,'2016-06-23 14:39:30','2016-07-19 14:20:24',NULL,'Russel','Bulanon','rsbulanon@gmail.com','Hagonoy, Bulacan','09321622825','active','superadmin','3uILg5vjcTyFbGIP2cY1tLPaKQ==',1,'Male','http://vignette1.wikia.nocookie.net/logopedia/images/b/bb/Purefoods.jpg/revision/latest?cb=20150506051734'),(2,'2016-06-30 15:47:24','2016-06-30 15:47:24',NULL,'Jovel','Quiamco','jvlquiamco@gmail.com','Hagonoy, Bulacan','09321622825','active','superadmin','72o5JSmZkX7N_xtDt6vPOLDJQqo=',NULL,'Male','http://www.gravatar.com/avatar/2ae05db25b0a42667f488e7763c51c46?d=identicon'),(3,'2016-06-30 15:52:02','2016-06-30 15:52:02',NULL,'JovsQ','Quiamco','dynamic.jvquiamco@gmail.com','Hagonoy, Bulacan','09321622825','active','superadmin','DJ7JeEi9uhSNC2FGCkSO1hR5-RU=',NULL,'Male','http://www.gravatar.com/avatar/46aa3bb21ff083c894ea64e0ded1ef77?d=identicon'),(4,'2016-07-04 12:04:58','2016-07-04 12:04:58',NULL,'Ned','Flanders','nedflanders@gmail.com','Malolos, Bulacan','09321622825','active','superadmin','CExyAJehUZY2SsJGlRQtf4zBaw==',NULL,'Male','http://www.gravatar.com/avatar/b658ab705b1f30f149666a6e21fbe6ec?d=identicon'),(5,'2016-07-06 02:43:15','2016-07-06 02:58:57',NULL,'Maud','Flanders','maud@flanders.com','Hagonoy, Bulacan','09321622825','active','Regular User','gIxjuUEZv4-TSHqmJCLWHFpXwA==',NULL,'Female','http://www.gravatar.com/avatar/63921e20d866864e1b42aaa973399e8f?d=identicon'),(6,'2016-07-06 03:09:10','2016-07-06 03:09:10',NULL,'Jovs','Quiamco','jvquiamco@dynamicobjx.com','Val','09123456789','active','Regular User','ozVWginfwOIZn9wkC0VDZGIJOC8=',NULL,'Male','http://www.gravatar.com/avatar/e3d9263537be9a38adf3ab2d4d8f7547?d=identicon'),(7,'2016-07-14 16:04:55','2016-07-14 17:05:26',NULL,'Aa','Aa','aa@gmail.com','Aa','Aa','active','Regular User','6eQn8egLIV-GIb4U8v5EokJb',NULL,'Male','http://www.gravatar.com/avatar/3979576bcdcbd166d005a5b225e1bc52?d=identicon'),(8,'2016-07-18 11:27:27','2016-08-29 14:57:20',NULL,'Lebron','James','lebron@gmail.com','San Pedro Hagonoy, Bulacan','09321622825','active','Regular User','QXH9vu9sQ4C3EXDbdaboPmqdTw==',NULL,'Male','https://s3-us-west-1.amazonaws.com/sanmateoprofileapp/profilepics/8e0258a8-c546-430d-84e7-64713ca5f10d.png');
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -310,10 +344,11 @@ CREATE TABLE `water_levels` (
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   `deleted_at` timestamp NULL DEFAULT NULL,
+  `area` varchar(255) DEFAULT NULL,
   `level` double DEFAULT NULL,
   `alert` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=27 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -322,7 +357,7 @@ CREATE TABLE `water_levels` (
 
 LOCK TABLES `water_levels` WRITE;
 /*!40000 ALTER TABLE `water_levels` DISABLE KEYS */;
-INSERT INTO `water_levels` VALUES (1,'2016-07-10 06:37:59','2016-07-10 06:37:59',NULL,18,'Alert'),(2,'2016-07-10 07:36:52','2016-07-10 07:36:52',NULL,18,'Alert'),(3,'2016-07-10 07:59:28','2016-07-10 07:59:28',NULL,23,'Critical'),(4,'2016-07-15 00:11:33','2016-07-15 00:11:33',NULL,18,'Alert'),(5,'2016-07-15 00:14:31','2016-07-15 00:14:31',NULL,22,'Critical'),(6,'2016-07-15 00:16:04','2016-07-15 00:16:04',NULL,23,'Critical'),(7,'2016-07-15 00:16:50','2016-07-15 00:16:50',NULL,23.2,'Critical'),(8,'2016-07-15 00:17:19','2016-07-15 00:17:19',NULL,23.3,'Critical'),(9,'2016-07-15 00:17:48','2016-07-15 00:17:48',NULL,23.4,'Critical'),(10,'2016-07-15 00:18:14','2016-07-15 00:18:14',NULL,23.5,'Critical'),(11,'2016-07-15 00:22:56','2016-07-15 00:22:56',NULL,23.6,'Critical'),(12,'2016-07-15 00:23:27','2016-07-15 00:23:27',NULL,23.7,'Critical'),(13,'2016-07-15 00:23:49','2016-07-15 00:23:49',NULL,23.8,'Critical'),(14,'2016-07-15 00:26:58','2016-07-15 00:26:58',NULL,23.9,'Critical'),(15,'2016-07-15 00:27:22','2016-07-15 00:27:22',NULL,24,'Critical'),(16,'2016-07-15 00:34:44','2016-07-15 00:34:44',NULL,26,'Critical'),(17,'2016-07-15 00:37:02','2016-07-15 00:37:02',NULL,27,'Critical'),(18,'2016-07-15 00:38:58','2016-07-15 00:38:58',NULL,28,'Critical'),(19,'2016-07-15 00:39:07','2016-07-15 00:39:07',NULL,29,'Critical'),(20,'2016-07-15 00:44:02','2016-07-15 00:44:02',NULL,29.1,'Critical'),(21,'2016-07-15 00:44:45','2016-07-15 00:44:45',NULL,29.3,'Critical'),(22,'2016-07-15 00:50:25','2016-07-15 00:50:25',NULL,29.4,'Critical'),(23,'2016-07-15 00:51:46','2016-07-15 00:51:46',NULL,29.5,'Critical'),(24,'2016-07-15 00:53:26','2016-07-15 00:53:26',NULL,29.6,'Critical'),(25,'2016-07-15 00:53:41','2016-07-15 00:53:41',NULL,29.7,'Critical'),(26,'2016-07-15 00:53:48','2016-07-15 00:53:48',NULL,29.8,'Critical');
+INSERT INTO `water_levels` VALUES (1,'2016-08-26 11:58:27','2016-08-26 11:58:27',NULL,'Batasan-San Mateo Bridge',29.8,'Critical'),(2,'2016-08-26 13:56:56','2016-08-26 13:56:56',NULL,'San Mateo Public Market',25,'Critical');
 /*!40000 ALTER TABLE `water_levels` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -371,4 +406,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2016-08-18 17:53:59
+-- Dump completed on 2016-09-01 21:16:02

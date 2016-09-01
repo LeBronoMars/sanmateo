@@ -22,10 +22,8 @@ func NewOfficialHandler(db *gorm.DB, pusher *pusher.Client) *OfficialHandler {
 func (handler OfficialHandler) Index(c *gin.Context) {
 	if IsTokenValid(c) {
 		officials := []m.Official{}
-		query := handler.db.Order("zindex asc").Find(&officials)
-		if (query.RowsAffected > 0) {
-			c.JSON(http.StatusOK,officials)
-		}
+		handler.db.Order("zindex asc").Find(&officials)
+		c.JSON(http.StatusOK,officials)
 	} else {
 		respond(http.StatusForbidden,"Sorry, but your session has expired!",c,true)	
 	}

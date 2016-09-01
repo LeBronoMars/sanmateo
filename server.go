@@ -81,7 +81,7 @@ func LoadAPIRoutes(r *gin.Engine, db *gorm.DB, pusher *pusher.Client) {
 	private.GET("/officials", officialHandler.Index)
 	private.POST("/official", officialHandler.Create)
 	private.PUT("/officials/:id", officialHandler.UpdateOfficialRecord)
-	r.Run(fmt.Sprintf(":%s", "8080"))
+	r.Run(fmt.Sprintf(":%s", "7000"))
 }
 
 func Auth(secret string) gin.HandlerFunc {
@@ -114,7 +114,7 @@ func InitDB() *gorm.DB {
 	_db.Set("gorm:table_options", "ENGINE=InnoDB").AutoMigrate(&m.User{},&m.News{},&m.Gallery{},&m.Incident{},
 																&m.IncidentReport{},&m.Notification{},
 																&m.Announcement{},&m.WaterLevel{},&m.Official{})
-	return &_db
+	return _db
 }
 
 func InitPusher() *pusher.Client {
