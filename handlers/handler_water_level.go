@@ -61,8 +61,9 @@ func (handler WaterLevelHandler) Create(c *gin.Context) {
 			result := handler.db.Create(&waterLevel)
 			if result.RowsAffected > 0 {
 				data := map[string]string{"action":"water level",
-											"title" : "New water level notification",
+											"title" : waterLevel.Area + " water level",
 											"message" : waterLevel.Alert, 
+											"area" : waterLevel.Area,
 											"id": strconv.Itoa(waterLevel.Id)}
 				handler.pusher.Trigger("client","san_mateo_event",data)
 				c.JSON(http.StatusCreated,waterLevel)
@@ -80,9 +81,10 @@ func (handler WaterLevelHandler) Create(c *gin.Context) {
 
 func (handler WaterLevelHandler) GetNewWaterLevelNotifications(c *gin.Context) {
 	if IsTokenValid(c) {
-		id := c.Param("id")
+		id,_ := strconv.Atoi(c.Param("id"))
+		area,_ := c.GetQuery("area")
 		qry_water_level := []m.WaterLevel{}
-		qry := handler.db.Where("id > ?",id).Order("created_at desc").Find(&qry_water_level)
+		qry := handler.db.Where("id > ? AND area = ?",id,area).Order("created_at desc").Find(&qry_water_level)
 		if qry.Error == nil {
 			c.JSON(http.StatusOK,qry_water_level)
 		} else {
@@ -113,4 +115,5 @@ func (handler WaterLevelHandler) GetWaterLevelByArea(c *gin.Context) {
 	}
 	return
 }
+
 

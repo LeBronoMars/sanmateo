@@ -32,21 +32,28 @@ func (handler IncidentReportHandler) Create(c *gin.Context) {
 				queryForReportedByUser := handler.db.Where("id = ?",incidentReport.ReportedBy).First(&reportedByUser)
 
 				if queryForReportedByUser.RowsAffected > 0 {
-					result := handler.db.Create(&incidentReport)
-					if result.RowsAffected > 0 {
-						qry := m.QryIncidentReports{}
-						res := handler.db.Where("incident_id = ?",incidentReport.Id).First(&qry)
-						if res.RowsAffected > 0 {
-							//send push to channel
-							data := map[string]string{"action": "new incident report",
-														"reporter_id" : strconv.Itoa(qry.ReporterId),
-														"incident_id" : strconv.Itoa(qry.IncidentId)}
-							handler.pusher.Trigger("admin","san_mateo_event",data)
-							c.JSON(http.StatusCreated,qry)
-						} else {
-							respond(http.StatusBadRequest,res.Error.Error(),c,true)
-						}
-					}					
+					alreadyFiledReport := m.IncidentReport{}
+					queryAlreadyFiled := handler.db.Where("reported_by = ? AND incident_id =?",incidentReport.ReportedBy,incidentReport.IncidentId).First(&alreadyFiledReport)
+					
+					if (queryAlreadyFiled.RowsAffected > 0) {
+						respond(http.StatusBadRequest,"You had already filed a malicious report about this incident",c,true)
+					} else {
+						result := handler.db.Create(&incidentReport)
+						if result.RowsAffected > 0 {
+							qry := m.QryIncidentReports{}
+							res := handler.db.Where("incident_id = ?",incidentReport.Id).First(&qry)
+							if res.RowsAffected > 0 {
+								//send push to channel
+								data := map[string]string{"action": "new incident report",
+															"reporter_id" : strconv.Itoa(qry.ReporterId),
+															"incident_id" : strconv.Itoa(qry.IncidentId)}
+								handler.pusher.Trigger("admin","san_mateo_event",data)
+								c.JSON(http.StatusCreated,qry)
+							} else {
+								respond(http.StatusBadRequest,res.Error.Error(),c,true)
+							}
+						}	
+					}				
 				} else {
 					respond(http.StatusBadRequest,"Reportee record not found!",c,true)
 				}
