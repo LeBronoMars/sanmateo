@@ -202,7 +202,7 @@ func (handler IncidentsHandler) UnblockIncidentReport(c *gin.Context) {
 		incident := m.Incident{}
 		qry := handler.db.Where("id = ? AND status = ?",incident_id,"blocked").First(&incident)
 		if qry.Error == nil {
-			incident.Status = "pending"
+			incident.Status = "active"
 			incident.Remarks = ""
 			res := handler.db.Save(&incident)
 			if res.RowsAffected > 0 {
@@ -220,4 +220,50 @@ func (handler IncidentsHandler) UnblockIncidentReport(c *gin.Context) {
 	}
 }
 
+
+func (handler IncidentsHandler) GetAllForReviewsReports(c *gin.Context) {
+	if IsTokenValid(c) {
+		incidents := []m.QryIncidentReports{}
+		var query = handler.db
+
+		startParam,startParamExist := c.GetQuery("start")
+		limitParam,limitParamExist := c.GetQuery("limit")
+		typeParam,typeParamExist := c.GetQuery("incident_type")
+		reportedByParam,reportedByParamExist := c.GetQuery("reported_by")
+
+		//start param exist
+		if startParamExist {
+			start,_ := strconv.Atoi(startParam)
+			if start != 0 {
+				query = query.Offset(start)				
+			}
+		} 
+
+		//limit param exist
+		if limitParamExist {
+			limit,_ := strconv.Atoi(limitParam)
+			query = query.Limit(limit)
+		} else {
+			query = query.Limit(10)
+		}
+
+		//type param exist
+		if typeParamExist {
+			query = query.Where("incident_type = ?",typeParam)
+		} 
+
+		//reported by param exist
+		if reportedByParamExist {
+			query = query.Where("reporter_id = ?",reportedByParam)
+		}
+
+		query = query.Where("report_status = ?","for review")
+
+		query.Order("created_at desc").Find(&incidents)
+		c.JSON(http.StatusOK,incidents)
+	} else {
+		respond(http.StatusForbidden,"Sorry, but your session has expired!",c,true)	
+	}
+	return
+}
 

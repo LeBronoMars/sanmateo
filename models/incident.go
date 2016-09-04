@@ -2,7 +2,7 @@ package models
 
 type Incident struct {
 	BaseModel
-	Images string `json:"images" form:"images" binding:"required" sql:"type:longtext"`
+	Images string `json:"images" form:"images" sql:"type:longtext"`
 	ReportedBy int `json:"reported_by" form:"reported_by" binding:"required"`
 	Latitude float64 `json:"latitude" form:"latitude" binding:"required"`
 	Longitude float64 `json:"longitude" form:"longitude" binding:"required"`

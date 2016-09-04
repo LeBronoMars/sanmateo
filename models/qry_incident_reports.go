@@ -12,12 +12,16 @@ type QryIncidentReports struct {
 	ReporterName string `json:"reporter_name"`
 	ReporterEmail string `json:"reporter_email"`
 	ReporterAddress string `json:"reporter_address"`
-	ReporterContactNo string `json:"repoter_contact_no"`
+	ReporterContactNo string `json:"reporter_contact_no"`
 	ReporterGender string `json:"reporter_gender"`
 	ReporterPicUrl string `json:"reporter_pic_url"`
+	IncidentReportId int `json:"incident_report_id"`
 	IncidentId int `json:"incident_id"`
 	ReportStatus string `json:"report_status"`
-	IncidentDescruption string `json:"incident_description"`
+	CreatedAt string `json:"created_at"`
+	Remarks string `json:"remarks"`
+	IncidentType string `json:"incident_type"`
+	IncidentDescription string `json:"incident_description"`
 	IncidentImages string `json:"incident_images"`
 	IncidentStatus string `json:"incident_status"`
 	IncidentAddress string `json:"incident_address"`

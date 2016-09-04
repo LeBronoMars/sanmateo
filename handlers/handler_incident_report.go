@@ -43,11 +43,17 @@ func (handler IncidentReportHandler) Create(c *gin.Context) {
 							qry := m.QryIncidentReports{}
 							res := handler.db.Where("incident_id = ?",incidentReport.Id).First(&qry)
 							if res.RowsAffected > 0 {
-								//send push to channel
-								data := map[string]string{"action": "new incident report",
-															"reporter_id" : strconv.Itoa(qry.ReporterId),
-															"incident_id" : strconv.Itoa(qry.IncidentId)}
-								handler.pusher.Trigger("admin","san_mateo_event",data)
+								//send push notif to admins for approval
+								admins := []m.User{}
+								res := handler.db.Where("user_level = ?", "superadmin").Find(&admins)
+								if res.RowsAffected > 0 {
+									for _, admin := range admins {
+										data := map[string]string{"action": "for review", 
+										"id": strconv.Itoa(qry.IncidentId),
+										"title":"Malicious report filed by " + qry.ReporterName}
+										handler.pusher.Trigger(admin.Email,"san_mateo_event",data)
+									}	
+								}
 								c.JSON(http.StatusCreated,qry)
 							} else {
 								respond(http.StatusBadRequest,res.Error.Error(),c,true)
