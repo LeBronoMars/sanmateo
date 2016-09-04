@@ -19,6 +19,7 @@ type QryIncidentReports struct {
 	IncidentId int `json:"incident_id"`
 	ReportStatus string `json:"report_status"`
 	CreatedAt string `json:"created_at"`
+	DeletedAt string `json:"deleted_at"`
 	Remarks string `json:"remarks"`
 	IncidentType string `json:"incident_type"`
 	IncidentDescription string `json:"incident_description"`

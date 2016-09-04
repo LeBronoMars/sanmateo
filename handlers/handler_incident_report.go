@@ -41,7 +41,7 @@ func (handler IncidentReportHandler) Create(c *gin.Context) {
 						result := handler.db.Create(&incidentReport)
 						if result.RowsAffected > 0 {
 							qry := m.QryIncidentReports{}
-							res := handler.db.Where("incident_id = ?",incidentReport.Id).First(&qry)
+							res := handler.db.Where("incident_report_id = ?",incidentReport.Id).First(&qry)
 							if res.RowsAffected > 0 {
 								//send push notif to admins for approval
 								admins := []m.User{}

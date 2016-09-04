@@ -267,3 +267,42 @@ func (handler IncidentsHandler) GetAllForReviewsReports(c *gin.Context) {
 	return
 }
 
+func (handler IncidentsHandler) DisapproveMaliciousReport(c *gin.Context) {
+	if IsTokenValid(c) {
+		incident_id := c.Param("incident_id")
+		incidentReport := m.IncidentReport{}
+		qry := handler.db.Where("incident_id = ?",incident_id).Delete(&incidentReport)
+		
+		if qry.Error == nil {
+			res := handler.db.Unscoped().Delete(&incidentReport)
+			if (res.Error == nil) {
+				respond(http.StatusOK,"Malicious report successfully disapproved",c,true)
+			} else {
+				respond(http.StatusBadRequest,res.Error.Error(),c,true)
+			}
+		} else {
+			respond(http.StatusBadRequest,qry.Error.Error(),c,true)
+		}
+	} else {
+		respond(http.StatusForbidden,"Sorry, but your session has expired!",c,true)	
+	}
+	return
+}
+
+func (handler IncidentsHandler) GetForReviewReportById(c *gin.Context) {
+	if IsTokenValid(c) {
+		incident_id := c.Param("incident_id")
+		incident := m.QryIncidentReports{}
+	
+		qry := handler.db.Where("incident_id = ?",incident_id).First(&incident)
+		if qry.RowsAffected > 0 {
+			c.JSON(http.StatusOK, incident)
+		} else {
+			respond(http.StatusBadRequest,qry.Error.Error(),c,true)
+		}
+	} else {
+		respond(http.StatusForbidden,"Sorry, but your session has expired!",c,true)	
+	}
+	return
+}
+
