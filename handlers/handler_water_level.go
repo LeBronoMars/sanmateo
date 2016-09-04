@@ -65,7 +65,7 @@ func (handler WaterLevelHandler) Create(c *gin.Context) {
 											"message" : waterLevel.Alert, 
 											"area" : waterLevel.Area,
 											"id": strconv.Itoa(waterLevel.Id)}
-				handler.pusher.Trigger("client","san_mateo_event",data)
+				handler.pusher.Trigger("clients","san_mateo_event",data)
 				c.JSON(http.StatusCreated,waterLevel)
 			} else {
 				respond(http.StatusBadRequest,result.Error.Error(),c,true)

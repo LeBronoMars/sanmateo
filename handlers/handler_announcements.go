@@ -64,7 +64,7 @@ func (handler AnnouncementHandler) Create(c *gin.Context) {
 											"title" : "Announcement from San Mateo Municipal",
 											"message" : announcement.Message, 
 											"id": strconv.Itoa(announcement.Id)}
-				handler.pusher.Trigger("client","san_mateo_event",data)
+				handler.pusher.Trigger("clients","san_mateo_event",data)
 				c.JSON(http.StatusCreated,announcement)
 			} else {
 				respond(http.StatusBadRequest,result.Error.Error(),c,true)

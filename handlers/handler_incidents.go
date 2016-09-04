@@ -148,10 +148,19 @@ func (handler IncidentsHandler) BlockIncidentReport(c *gin.Context) {
 			incident.Remarks = remarks
 			res := handler.db.Save(&incident)
 			if res.RowsAffected > 0 {
+				
+				incidentReport := m.IncidentReport{}
+				incidentReportExist := handler.db.Where("incident_id = ?",incident_id).First(&incidentReport)
+				
+				if incidentReportExist.RowsAffected > 0 {
+					handler.db.Unscoped().Delete(&incidentReport)
+				}
+			
 				//send push to channel
 				data := map[string]string{"action": "block report","id": strconv.Itoa(incident.Id),
 							"reported_by":strconv.Itoa(incident.ReportedBy),"remarks":remarks}
 				handler.pusher.Trigger("clients","san_mateo_event",data)
+
 				qryIncident := m.QryIncident{}
 				handler.db.Where("incident_id = ?",incident.Id).First(&qryIncident)
 				c.JSON(http.StatusOK,qryIncident)
@@ -182,7 +191,7 @@ func (handler IncidentsHandler) ApproveIncidentReport(c *gin.Context) {
 					data := map[string]string{"action": "new incident", "id": strconv.Itoa(qry_incident.IncidentId),
 						"title":"New incident reported by " + qry_incident.ReporterName,
 						"content": qry_incident.IncidentDescription}
-					handler.pusher.Trigger("client","san_mateo_event",data)
+					handler.pusher.Trigger("clients","san_mateo_event",data)
 					c.JSON(http.StatusOK,qry_incident)
 				}
 			} else {
