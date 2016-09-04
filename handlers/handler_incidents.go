@@ -85,7 +85,8 @@ func (handler IncidentsHandler) Create(c *gin.Context) {
 					if res.RowsAffected > 0 {
 						for _, admin := range admins {
 							data := map[string]string{"action": "incident_approval", 
-							"id": strconv.Itoa(qry_incident.IncidentId),"title":"New incident reported by " + qry_incident.ReporterName,
+							"id": strconv.Itoa(qry_incident.IncidentId),
+							"title":"New incident reported by " + qry_incident.ReporterName,
 							"content": qry_incident.IncidentDescription}
 							handler.pusher.Trigger(admin.Email,"san_mateo_event",data)
 						}	
@@ -139,8 +140,9 @@ func (handler IncidentsHandler) BlockIncidentReport(c *gin.Context) {
 	if IsTokenValid(c) {
 		incident_id := c.Param("incident_id")
 		remarks := c.PostForm("remarks")
+		status := c.PostForm("status")
 		incident := m.Incident{}
-		qry := handler.db.Where("id = ? AND status = ?",incident_id,"pending").First(&incident)
+		qry := handler.db.Where("id = ? AND status = ?",incident_id,status).First(&incident)
 		if qry.Error == nil {
 			incident.Status = "blocked"
 			incident.Remarks = remarks
@@ -168,7 +170,7 @@ func (handler IncidentsHandler) ApproveIncidentReport(c *gin.Context) {
 	if IsTokenValid(c) {
 		incident_id := c.Param("incident_id")
 		incident := m.Incident{}
-		qry := handler.db.Where("id = ? AND status = ?",incident_id,"pending").First(&incident)
+		qry := handler.db.Where("id = ? AND status = ?",incident_id,"for approval").First(&incident)
 		if qry.Error == nil {
 			incident.Status = "active"
 			res := handler.db.Save(&incident)

@@ -14,6 +14,6 @@ type Incident struct {
 }
 
 func (i *Incident) BeforeCreate() (err error) {
-	i.Status = "pending"
+	i.Status = "for approval"
 	return
 }
