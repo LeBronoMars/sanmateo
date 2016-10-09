@@ -4,6 +4,10 @@ import (
 	"net/http"
     "strings"
     "strconv"
+    "net/smtp"
+    "log"
+    "math/rand"
+    "time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/gorm"
@@ -182,4 +186,55 @@ func (handler UserHandler) GetUserById(c *gin.Context) {
 		respond(http.StatusBadRequest,"Sorry, but your session has expired!",c,true)	
 	}
 	return
+}
+
+func (handler UserHandler) ForgotPassword(c *gin.Context) {
+	email := c.PostForm("email")
+	user := m.User{}
+	qry := handler.db.Where("email = ?", email).First(&user)
+
+	if qry.RowsAffected > 0 {
+		from := "lebronomars@gmail.com"
+		pass := "09251988"
+
+		newPassword := RandomString(12)
+
+  		msg := "From: " + from + "\r\n" +
+           	"To: " + user.Email + "\r\n" + 
+           	"MIME-Version: 1.0" +  "\r\n" +
+           	"Content-type: text/html" + "\r\n" +
+   			"Subject: Forgot Password Request" + "\r\n\r\n" +
+			"Your new password <b>" + newPassword + "</b>. Please be sure that you'll change your password immediately." + "\r\n\r\n"
+
+		err := smtp.SendMail("smtp.gmail.com:587",
+			smtp.PlainAuth("", from, pass, "smtp.gmail.com"),
+			from, []string{user.Email}, []byte(msg))
+
+		if err != nil {
+			log.Printf("smtp error: %s", err)
+			return
+		} else {
+			encryptedPassword := encrypt([]byte(config.GetString("CRYPT_KEY")), newPassword)
+			user.Password = encryptedPassword
+			updateResult := handler.db.Save(&user)
+			if updateResult.RowsAffected > 0 {
+				respond(http.StatusOK, "Your new password was successfully sent to your email",c,false)
+			} else {
+				respond(http.StatusBadRequest, updateResult.Error.Error(),c,true)
+			}
+		}
+	} else {
+		respond(http.StatusBadRequest, "User record not found!",c,true)
+	}
+	return
+}
+
+func RandomString(strlen int) string {
+	rand.Seed(time.Now().UTC().UnixNano())
+	const chars = "abcdefghijklmnopqrstuvwxyz0123456789"
+	result := make([]byte, strlen)
+	for i := 0; i < strlen; i++ {
+		result[i] = chars[rand.Intn(len(chars))]
+	}
+	return string(result)
 }

@@ -19,7 +19,7 @@ func NewGalleryHandler(db *gorm.DB) *GalleryHandler {
 func (handler GalleryHandler) Index(c *gin.Context) {
 	if IsTokenValid(c) {
 		galleries := []m.Gallery{}	
-		handler.db.Find(&galleries)
+		handler.db.Order("created_at desc").Find(&galleries)
 		c.JSON(http.StatusOK,galleries)
 	} else {
 		respond(http.StatusForbidden,"Sorry, but your session has expired!",c,true)	
@@ -46,3 +46,37 @@ func (handler GalleryHandler) Create(c *gin.Context) {
 	}
 	return
 }
+
+func (handler GalleryHandler) UpdateGallery(c *gin.Context) {
+	if IsTokenValid(c) {
+		id := c.Param("id")
+		gallery := m.Gallery{}
+		qry := handler.db.Where("id = ?",id).First(&gallery)
+		if qry.RowsAffected > 0 {
+			//update title
+			if (len(c.PostForm("title")) > 0) {
+				gallery.Title = c.PostForm("title")
+			}
+			//update description
+			if (len(c.PostForm("description")) > 0) {
+				gallery.Description = c.PostForm("description")
+			}
+			//update image url
+			if (len(c.PostForm("image_url")) > 0) {
+				gallery.ImageUrl = c.PostForm("image_url")
+			}
+			result := handler.db.Save(&gallery)
+			if result.RowsAffected > 0 {
+				c.JSON(http.StatusOK, gallery)
+			} else {
+				respond(http.StatusBadRequest,result.Error.Error(),c,true)	
+			}
+		} else {
+			respond(http.StatusBadRequest,"Gallery record not found!",c,true)
+		}
+	} else {
+		respond(http.StatusForbidden,"Sorry, but your session has expired!",c,true)	
+	}
+	return
+}
+

@@ -35,6 +35,7 @@ func LoadAPIRoutes(r *gin.Engine, db *gorm.DB, pusher *pusher.Client) {
 	private.PUT("/change_password", userHandler.ChangePassword)
 	private.PUT("/change_profile_pic", userHandler.ChangeProfilePic)
 	private.GET("/users/:user_id", userHandler.GetUserById)
+	public.POST("/forgot_password", userHandler.ForgotPassword)
 
 	//manage news
 	newsHandler := h.NewNewsHandler(db,pusher)
@@ -46,6 +47,7 @@ func LoadAPIRoutes(r *gin.Engine, db *gorm.DB, pusher *pusher.Client) {
 	galleryHandler := h.NewGalleryHandler(db)
 	private.POST("/gallery", galleryHandler.Create)
 	private.GET("/galleries", galleryHandler.Index)
+	private.PUT("/galleries/:id", galleryHandler.UpdateGallery)
 
 	//manage incidents
 	incidentsHandler := h.NewIncidentsHandler(db,pusher)
@@ -117,7 +119,7 @@ func InitDB() *gorm.DB {
 	_db.Set("gorm:table_options", "ENGINE=InnoDB").AutoMigrate(&m.User{},&m.News{},&m.Gallery{},&m.Incident{},
 																&m.IncidentReport{},&m.Notification{},
 																&m.Announcement{},&m.WaterLevel{},&m.Official{})
-	return _db
+	return &_db
 }
 
 func InitPusher() *pusher.Client {
