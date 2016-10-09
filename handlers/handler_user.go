@@ -194,8 +194,8 @@ func (handler UserHandler) ForgotPassword(c *gin.Context) {
 	qry := handler.db.Where("email = ?", email).First(&user)
 
 	if qry.RowsAffected > 0 {
-		from := "lebronomars@gmail.com"
-		pass := "09251988"
+		from := "1sanmateo.app@gmail.com"
+		pass := "sanmateo851troy"
 
 		newPassword := RandomString(12)
 
