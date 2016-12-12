@@ -43,7 +43,7 @@ type Response struct {
 func generateJWT(username string) string {
 	mySigningKey := []byte(config.GetString("TOKEN_KEY"))
     claims := &jwt.StandardClaims{
-    	ExpiresAt: time.Now().Add(time.Hour * 24).Unix(),
+    	ExpiresAt: time.Now().Add(time.Hour * 200).Unix(),
     	Issuer:    username,
 	}
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)

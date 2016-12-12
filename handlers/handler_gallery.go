@@ -17,65 +17,53 @@ func NewGalleryHandler(db *gorm.DB) *GalleryHandler {
 }
 
 func (handler GalleryHandler) Index(c *gin.Context) {
-	if IsTokenValid(c) {
-		galleries := []m.Gallery{}	
-		handler.db.Order("created_at desc").Find(&galleries)
-		c.JSON(http.StatusOK,galleries)
-	} else {
-		respond(http.StatusForbidden,"Sorry, but your session has expired!",c,true)	
-	}
+	galleries := []m.Gallery{}	
+	handler.db.Order("created_at desc").Find(&galleries)
+	c.JSON(http.StatusOK,galleries)
 	return
 }
 
 func (handler GalleryHandler) Create(c *gin.Context) {
-	if IsTokenValid(c) {
-		var gallery m.Gallery
-		err := c.Bind(&gallery)
-		if err == nil {
-			result := handler.db.Create(&gallery)
-			if result.RowsAffected > 0 {
-				c.JSON(http.StatusCreated,gallery)
-			} else {
-				respond(http.StatusBadRequest,result.Error.Error(),c,true)
-			}
+	var gallery m.Gallery
+	err := c.Bind(&gallery)
+	if err == nil {
+		result := handler.db.Create(&gallery)
+		if result.RowsAffected > 0 {
+			c.JSON(http.StatusCreated,gallery)
 		} else {
-			respond(http.StatusBadRequest,err.Error(),c,true)
+			respond(http.StatusBadRequest,result.Error.Error(),c,true)
 		}
 	} else {
-		respond(http.StatusForbidden,"Sorry, but your session has expired!",c,true)	
+		respond(http.StatusBadRequest,err.Error(),c,true)
 	}
 	return
 }
 
 func (handler GalleryHandler) UpdateGallery(c *gin.Context) {
-	if IsTokenValid(c) {
-		id := c.Param("id")
-		gallery := m.Gallery{}
-		qry := handler.db.Where("id = ?",id).First(&gallery)
-		if qry.RowsAffected > 0 {
-			//update title
-			if (len(c.PostForm("title")) > 0) {
-				gallery.Title = c.PostForm("title")
-			}
-			//update description
-			if (len(c.PostForm("description")) > 0) {
-				gallery.Description = c.PostForm("description")
-			}
-			//update image url
-			if (len(c.PostForm("image_url")) > 0) {
-				gallery.ImageUrl = c.PostForm("image_url")
-			}
-			result := handler.db.Save(&gallery)
-			if result.RowsAffected > 0 {
-				c.JSON(http.StatusOK, gallery)
-			} else {
-				respond(http.StatusBadRequest,result.Error.Error(),c,true)	
-			}
+	id := c.Param("id")
+	gallery := m.Gallery{}
+	qry := handler.db.Where("id = ?",id).First(&gallery)
+	if qry.RowsAffected > 0 {
+		//update title
+		if (len(c.PostForm("title")) > 0) {
+			gallery.Title = c.PostForm("title")
+		}
+		//update description
+		if (len(c.PostForm("description")) > 0) {
+			gallery.Description = c.PostForm("description")
+		}
+		//update image url
+		if (len(c.PostForm("image_url")) > 0) {
+			gallery.ImageUrl = c.PostForm("image_url")
+		}
+		result := handler.db.Save(&gallery)
+		if result.RowsAffected > 0 {
+			c.JSON(http.StatusOK, gallery)
 		} else {
-			respond(http.StatusBadRequest,"Gallery record not found!",c,true)
+			respond(http.StatusBadRequest,result.Error.Error(),c,true)	
 		}
 	} else {
-		respond(http.StatusForbidden,"Sorry, but your session has expired!",c,true)	
+		respond(http.StatusBadRequest,"Gallery record not found!",c,true)
 	}
 	return
 }
