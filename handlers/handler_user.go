@@ -8,6 +8,7 @@ import (
     "log"
     "math/rand"
     "time"
+    "fmt"
 
 	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/gorm"
@@ -87,8 +88,10 @@ func (handler UserHandler) Auth(c *gin.Context) {
 		} else {
 			decryptedPassword := decrypt([]byte(config.GetString("CRYPT_KEY")), user.Password)
 			//invalid password
+			fmt.Printf("\n decrypted password --> %s", decryptedPassword)
+			fmt.Printf("\n password param --> %s", password)
 			if decryptedPassword != password {
-				respond(http.StatusBadRequest,"Account not found!",c,true)
+				respond(http.StatusBadRequest,"Invalid account!",c,true)
 			} else {
 				//authentication successful
 				authenticatedUser := m.AuthenticatedUser{}
