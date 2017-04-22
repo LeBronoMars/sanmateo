@@ -31,7 +31,9 @@ func (handler AnnouncementHandler) Index(c *gin.Context) {
 	if startParamExist {
 		start,_ := strconv.Atoi(startParam)
 		if start != 0 {
-			query = query.Offset(start)				
+			query = query.Offset(start).Order("created_at asc")		
+		} else {
+			query = query.Offset(0).Order("created_at desc")
 		}
 	} 
 
@@ -43,7 +45,7 @@ func (handler AnnouncementHandler) Index(c *gin.Context) {
 		query = query.Limit(10)
 	}
 
-	query.Order("created_at desc").Find(&announcements)
+	query.Find(&announcements)
 	c.JSON(http.StatusOK,announcements)
 	return
 }

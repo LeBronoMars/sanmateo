@@ -119,7 +119,7 @@ func InitDB() *gorm.DB {
 	_db.Set("gorm:table_options", "ENGINE=InnoDB").AutoMigrate(&m.User{},&m.News{},&m.Gallery{},&m.Incident{},
 																&m.IncidentReport{},&m.Notification{},
 																&m.Announcement{},&m.WaterLevel{},&m.Official{})
-	return _db
+	return &_db
 }
 
 func InitPusher() *pusher.Client {

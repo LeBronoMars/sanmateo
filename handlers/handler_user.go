@@ -61,7 +61,7 @@ func (handler UserHandler) Create(c *gin.Context) {
 				respond(http.StatusBadRequest,result.Error.Error(),c,true)
 			}
 		} else {
-			respond(http.StatusForbidden,"Email already taken",c,true)	
+			respond(http.StatusBadRequest,"Email already taken",c,true)	
 		}
 	} else {
 		respond(http.StatusBadRequest,err.Error(),c,true)

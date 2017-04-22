@@ -33,7 +33,9 @@ func (handler IncidentsHandler) Index(c *gin.Context) {
 	if startParamExist {
 		start,_ := strconv.Atoi(startParam)
 		if start != 0 {
-			query = query.Offset(start)				
+			query = query.Offset(start).Order("incident_date_reported asc")		
+		} else {
+			query = query.Offset(0).Order("incident_date_reported desc")
 		}
 	} 
 
@@ -60,7 +62,7 @@ func (handler IncidentsHandler) Index(c *gin.Context) {
 		query = query.Where("status = ?",statusParam)
 	}
 
-	query.Order("incident_date_reported desc").Find(&incidents)
+	query.Find(&incidents)
 	c.JSON(http.StatusOK,incidents)
 	return
 }
