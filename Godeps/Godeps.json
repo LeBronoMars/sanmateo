@@ -73,6 +73,11 @@
 			"Rev": "197e8d3cf42199cfd53cd775deb37f3637234635"
 		},
 		{
+			"ImportPath": "github.com/itsjamie/gin-cors",
+			"Comment": "1.0.0",
+			"Rev": "97b4a9da79331dfa2b6d35f4cdd1e50f5148859c"
+		},
+		{
 			"ImportPath": "github.com/jinzhu/gorm",
 			"Rev": "9a63fb28bad5cfdb0f89e918ad063f45285f1064"
 		},

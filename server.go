@@ -4,6 +4,7 @@ import (
 	"os"
 	"fmt"
 	"log"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	_ "github.com/go-sql-driver/mysql"
@@ -13,14 +14,22 @@ import (
 	"github.com/jinzhu/gorm"
 	"github.com/dgrijalva/jwt-go"
 	"github.com/pusher/pusher-http-go"
-	"gopkg.in/gin-contrib/cors.v1"
+	"github.com/itsjamie/gin-cors"
 )
 
 func main() {
 	pusher := *InitPusher()
 	db := *InitDB()
 	router := gin.Default()
-	router.Use(cors.Default())
+	config := cors.Config {
+		Origins:         "*",
+		RequestHeaders:  "Authorization",
+		Methods:         "GET, POST, PUT, DELETE",
+		Credentials:     true,
+		ValidateHeaders: false,
+		MaxAge:          24 * time.Hour,
+	}
+	router.Use(cors.Middleware(config))
 	LoadAPIRoutes(router, &db, &pusher)
 }
 
