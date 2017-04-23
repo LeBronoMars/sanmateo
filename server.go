@@ -13,22 +13,14 @@ import (
 	"github.com/jinzhu/gorm"
 	"github.com/dgrijalva/jwt-go"
 	"github.com/pusher/pusher-http-go"
-	"github.com/itsjamie/gin-cors"
+	"gopkg.in/gin-contrib/cors.v1"
 )
 
 func main() {
 	pusher := *InitPusher()
 	db := *InitDB()
 	router := gin.Default()
-		config := cors.Config{
-		Origins:         "*",
-		RequestHeaders:  "Authorization",
-		Methods:         "GET, POST, PUT",
-		Credentials:     true,
-		ValidateHeaders: false,
-		MaxAge:          24 * time.Hour,
-	}
-	router.Use(cors.Middleware(config))
+	router.Use(cors.Default())
 	LoadAPIRoutes(router, &db, &pusher)
 }
 
