@@ -27,7 +27,30 @@ func NewUserHandler(db *gorm.DB) *UserHandler {
 //get all users
 func (handler UserHandler) Index(c *gin.Context) {
 	users := []m.User{}
-	handler.db.Find(&users)
+	var query = handler.db
+
+	startParam,startParamExist := c.GetQuery("start")
+	limitParam,limitParamExist := c.GetQuery("limit")
+
+	//start param exist
+	if startParamExist {
+		start,_ := strconv.Atoi(startParam)
+		if start != 0 {
+			query = query.Offset(start)				
+		} else {
+			query = query.Offset(0)
+		}
+	} 
+
+	//limit param exist
+	if limitParamExist {
+		limit,_ := strconv.Atoi(limitParam)
+		query = query.Limit(limit)
+	} else {
+		query = query.Limit(10)
+	}
+
+	query.Find(&users)
 	c.JSON(http.StatusOK,users)
 	return
 }
@@ -67,6 +90,34 @@ func (handler UserHandler) Create(c *gin.Context) {
 		respond(http.StatusBadRequest,err.Error(),c,true)
 	}
 	return
+}
+
+//create new user
+func (handler UserHandler) CreateSuperAdmin(c *gin.Context) {
+	var user m.User
+	err := c.Bind(&user)
+	if err == nil {
+		//check for existing email
+		existingUser := m.User{}
+		existingUserQuery := handler.db.Where("email = ?", user.Email).First(&existingUser)
+		if existingUserQuery.RowsAffected > 0 {
+			respond(http.StatusBadRequest, "Email already taken!", c, true)
+		} else {
+			encryptedPassword := encrypt([]byte(config.GetString("CRYPT_KEY")), user.Password)
+			user.Password = encryptedPassword
+			user.UserLevel = "Super Admin"
+			saveResult := handler.db.Save(&user)
+			if saveResult.RowsAffected > 0 {
+				//authentication successful
+				token := &JWT{Token: generateJWT(user.Email)}
+				c.JSON(http.StatusCreated, token)
+			} else {
+				respond(http.StatusBadRequest, saveResult.Error.Error(), c, true)
+			}
+		}
+	} else {
+		respond(http.StatusBadRequest, err.Error(), c, true)
+	}
 }
 
 //user authentication
@@ -220,4 +271,18 @@ func RandomString(strlen int) string {
 		result[i] = chars[rand.Intn(len(chars))]
 	}
 	return string(result)
+}
+
+type JWT struct {
+	Token string `json:"token"`
+}
+
+type Pagination struct {
+	Max	int `json:"max"`
+	Offset int `json:"offset"`
+}
+
+func CreatePagination(m int, o int) *Pagination {
+	paginationObject := &Pagination{Max: m, Offset: o}
+	return paginationObject
 }

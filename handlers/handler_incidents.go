@@ -78,7 +78,7 @@ func (handler IncidentsHandler) Create(c *gin.Context) {
 			if qry.RowsAffected > 0 {
 				//send push notif to admins for approval
 				admins := []m.User{}
-				res := handler.db.Where("user_level = ?", "superadmin").Find(&admins)
+				res := handler.db.Where("user_level = ?", "Super Admin").Find(&admins)
 				if res.RowsAffected > 0 {
 					for _, admin := range admins {
 						data := map[string]string{"action": "incident_approval", 
@@ -88,7 +88,7 @@ func (handler IncidentsHandler) Create(c *gin.Context) {
 						handler.pusher.Trigger(admin.Email,"san_mateo_event",data)
 					}	
 				}
-				c.JSON(http.StatusCreated,qry_incident)
+				c.JSON(http.StatusCreated, qry_incident)
 			}
 		} else {
 			respond(http.StatusBadRequest,result.Error.Error(),c,true)

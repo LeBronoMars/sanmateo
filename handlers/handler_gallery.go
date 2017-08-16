@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/gorm"
@@ -18,7 +19,30 @@ func NewGalleryHandler(db *gorm.DB) *GalleryHandler {
 
 func (handler GalleryHandler) Index(c *gin.Context) {
 	galleries := []m.Gallery{}	
-	handler.db.Order("created_at desc").Find(&galleries)
+	var query = handler.db
+
+	startParam,startParamExist := c.GetQuery("start")
+	limitParam,limitParamExist := c.GetQuery("limit")
+
+	//start param exist
+	if startParamExist {
+		start,_ := strconv.Atoi(startParam)
+		if start != 0 {
+			query = query.Offset(start).Order("created_at asc")		
+		} else {
+			query = query.Offset(0).Order("created_at desc")
+		}
+	} 
+
+	//limit param exist
+	if limitParamExist {
+		limit,_ := strconv.Atoi(limitParam)
+		query = query.Limit(limit)
+	} else {
+		query = query.Limit(10)
+	}
+
+	query.Order("created_at desc").Find(&galleries)
 	c.JSON(http.StatusOK,galleries)
 	return
 }
