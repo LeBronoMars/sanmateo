@@ -14,6 +14,7 @@ import (
 	"github.com/jinzhu/gorm"
 	m "profile/sanmateo/api/models"
 	"profile/sanmateo/api/config"
+	"github.com/dgrijalva/jwt-go"
 )
 
 type UserHandler struct {
@@ -259,6 +260,28 @@ func (handler UserHandler) ForgotPassword(c *gin.Context) {
 		}
 	} else {
 		respond(http.StatusBadRequest, "User record not found!",c,true)
+	}
+	return
+}
+
+func (handler UserHandler) GetUserInfo(c *gin.Context) {
+	if c.Request.Header.Get("Authorization") != "" {
+		tokenString := c.Request.Header.Get("Authorization")
+		token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
+		    return []byte(config.GetString("TOKEN_KEY")), nil
+		})
+		if err != nil || !token.Valid {
+			respond(http.StatusUnauthorized, err.Error(), c, true)
+		} else {
+			claims, _ := token.Claims.(jwt.MapClaims)
+			user := m.User{}
+			res := handler.db.Where("email = ?", claims["iss"]).First(&user)
+			if res.RowsAffected > 0 {
+				c.JSON(http.StatusOK, user)
+			} else {
+				respond(http.StatusUnauthorized, "User record not found", c, true)
+			}
+		}
 	}
 	return
 }
