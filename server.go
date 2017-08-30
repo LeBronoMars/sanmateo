@@ -99,7 +99,7 @@ func LoadAPIRoutes(r *gin.Engine, db *gorm.DB, pusher *pusher.Client) {
 	private.GET("/officials", officialHandler.Index)
 	private.POST("/official", officialHandler.Create)
 	private.PUT("/officials/:id", officialHandler.UpdateOfficialRecord)
-	r.Run(fmt.Sprintf(":%s", "7000"))
+	r.Run(fmt.Sprintf(":%s", "7070"))
 }
 
 func Auth(secret string) gin.HandlerFunc {
