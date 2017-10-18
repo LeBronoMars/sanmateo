@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"time"
+	"net/http"
 
 	"github.com/gin-gonic/gin"
 	_ "github.com/go-sql-driver/mysql"
@@ -16,6 +17,7 @@ import (
 	"github.com/pusher/pusher-http-go"
 	"github.com/itsjamie/gin-cors"
 )
+
 
 func main() {
 	pusher := *InitPusher()
@@ -33,10 +35,15 @@ func main() {
 	LoadAPIRoutes(router, &db, &pusher)
 }
 
+type Response struct {
+	Message string `json:"message"`
+}
+
+
 func LoadAPIRoutes(r *gin.Engine, db *gorm.DB, pusher *pusher.Client) {
 	public := r.Group("/api/v1")
 	private := r.Group("/api/v1")
-	private.Use(Auth(config.GetString("TOKEN_KEY")))
+	private.Use(Auth(config.GetString("TOKEN_KEY"), db))
 
 	//manage users
 	userHandler := h.NewUserHandler(db)
@@ -49,6 +56,8 @@ func LoadAPIRoutes(r *gin.Engine, db *gorm.DB, pusher *pusher.Client) {
 	private.GET("/users/:user_id", userHandler.GetUserById)
 	private.GET("/me", userHandler.GetUserInfo)
 	public.POST("/forgot_password", userHandler.ForgotPassword)
+	private.PUT("/users/:id/block", userHandler.BlockUser)
+	private.PUT("/users/:id/unblock", userHandler.UnblockUser)
 
 	//manage news
 	newsHandler := h.NewNewsHandler(db,pusher)
@@ -108,19 +117,44 @@ func LoadAPIRoutes(r *gin.Engine, db *gorm.DB, pusher *pusher.Client) {
 	r.Run(fmt.Sprintf(":%s", "7070"))
 }
 
-func Auth(secret string) gin.HandlerFunc {
+func Auth(secret string, db *gorm.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		tokenString := c.Request.Header.Get("Authorization")
+		if c.Request.Header.Get("Authorization") != "" {
+		
+			tokenString := c.Request.Header.Get("Authorization")
 
-		token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
-		    return []byte(config.GetString("TOKEN_KEY")), nil
-		})
+			token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
+			    return []byte(secret), nil
+			})
 
-		if err != nil || !token.Valid {
-		    c.AbortWithError(401, err)
-		} 
+			if err != nil || !token.Valid {
+				response := &Response{Message: err.Error()}
+				c.JSON(http.StatusUnauthorized, response)
+				c.Abort()
+			} else {
+				claims, _ := token.Claims.(jwt.MapClaims)
+				email := fmt.Sprintf("%s", claims["iss"])
+
+				user := m.User{}	
+				res := db.Where("email = ?", email).First(&user)
+				if res.RowsAffected > 0 {
+					if user.Status == "blocked" {
+						response := &Response{Message: "You're account is currently blocked. Please contact the administration on this number (+044) 706-7920"}
+						c.JSON(http.StatusUnauthorized, response)
+						c.Abort();
+					}
+				} else {
+					c.Next();
+				}
+			}
+		} else {
+			response := &Response{Message: "Authorization is required"}
+			c.JSON(http.StatusUnauthorized, response)
+			c.Abort()
+		}
 	}
 }
+
 
 func InitDB() *gorm.DB {
 	dbURL := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8&parseTime=True&loc=Local",
@@ -134,7 +168,7 @@ func InitDB() *gorm.DB {
 		panic(fmt.Sprintf("Error connecting to the database:  %s", err))
 	}
 	_db.DB()
-	_db.LogMode(true)
+	_db.LogMode(false)
 	_db.Set("gorm:table_options", "ENGINE=InnoDB").AutoMigrate(&m.User{},&m.News{},&m.Gallery{},&m.Incident{},
 																&m.IncidentReport{},&m.Notification{},
 																&m.Announcement{},&m.WaterLevel{},&m.Official{})

@@ -145,21 +145,25 @@ func (handler UserHandler) Auth(c *gin.Context) {
 			if decryptedPassword != password {
 				respond(http.StatusBadRequest,"Invalid account!",c,true)
 			} else {
-				//authentication successful
-				authenticatedUser := m.AuthenticatedUser{}
-				authenticatedUser.Id = user.Id
-				authenticatedUser.FirstName = user.FirstName
-				authenticatedUser.LastName = user.LastName
-				authenticatedUser.Status = user.Status
-				authenticatedUser.Email = user.Email
-				authenticatedUser.Address = user.Address
-				authenticatedUser.UserLevel = user.UserLevel
-				authenticatedUser.CreatedAt = user.CreatedAt
-				authenticatedUser.UpdatedAt = user.UpdatedAt
-				authenticatedUser.Gender = user.Gender
-				authenticatedUser.PicUrl = user.PicUrl
-				authenticatedUser.Token = generateJWT(email)
-				c.JSON(http.StatusOK, authenticatedUser)
+				if (user.Status == "blocked") {
+					respond(http.StatusForbidden, "You're account is currently blocked. Please contact the administration on this number (+044) 706-7920", c ,false)
+				} else {
+					//authentication successful
+					authenticatedUser := m.AuthenticatedUser{}
+					authenticatedUser.Id = user.Id
+					authenticatedUser.FirstName = user.FirstName
+					authenticatedUser.LastName = user.LastName
+					authenticatedUser.Status = user.Status
+					authenticatedUser.Email = user.Email
+					authenticatedUser.Address = user.Address
+					authenticatedUser.UserLevel = user.UserLevel
+					authenticatedUser.CreatedAt = user.CreatedAt
+					authenticatedUser.UpdatedAt = user.UpdatedAt
+					authenticatedUser.Gender = user.Gender
+					authenticatedUser.PicUrl = user.PicUrl
+					authenticatedUser.Token = generateJWT(email)
+					c.JSON(http.StatusOK, authenticatedUser)
+				}
 			}					
 		}
 	}
@@ -284,6 +288,42 @@ func (handler UserHandler) GetUserInfo(c *gin.Context) {
 		}
 	}
 	return
+}
+
+func (handler UserHandler) BlockUser(c *gin.Context) {
+	id := c.Param("id")
+	user := m.User{}
+	qry := handler.db.Where("id = ?",id).First(&user)
+	
+	if qry.RowsAffected > 0 {
+		user.Status = "blocked"
+		updateResult := handler.db.Save(&user)
+		if (updateResult.RowsAffected > 0) {
+			respond(http.StatusOK, "User successfully blocked.", c, false)
+		} else {
+			respond(http.StatusBadRequest, updateResult.Error.Error(), c, true)
+		}
+	} else {
+		respond(http.StatusNotFound, "User record not found.", c, true)
+	}
+}
+
+func (handler UserHandler) UnblockUser(c *gin.Context) {
+	id := c.Param("id")
+	user := m.User{}
+	qry := handler.db.Where("id = ?",id).First(&user)
+	
+	if qry.RowsAffected > 0 {
+		user.Status = "active"
+		updateResult := handler.db.Save(&user)
+		if (updateResult.RowsAffected > 0) {
+			respond(http.StatusOK, "User successfully unblocked.", c, false)
+		} else {
+			respond(http.StatusBadRequest, updateResult.Error.Error(), c, true)
+		}
+	} else {
+		respond(http.StatusNotFound, "User record not found.", c, true)
+	}
 }
 
 func RandomString(strlen int) string {
