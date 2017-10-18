@@ -56,6 +56,51 @@ func (handler UserHandler) Index(c *gin.Context) {
 	return
 }
 
+func (handler UserHandler) Update(c *gin.Context) {
+	id := c.Param("id")
+	user := m.User{}
+	qry := handler.db.Where("id = ? AND status = ?",id,"active").First(&user)
+	if qry.RowsAffected > 0 {
+		//update first name
+		if (len(c.PostForm("first_name")) > 0) {
+			user.FirstName = c.PostForm("first_name")
+		}
+		//update last name
+		if (len(c.PostForm("last_name")) > 0) {
+			user.LastName = c.PostForm("last_name")
+		}
+		//update email
+		if (len(c.PostForm("email")) > 0) {
+			user.Email = c.PostForm("email")
+		}
+		//update address
+		if (len(c.PostForm("background")) > 0) {
+			user.Address = c.PostForm("address")
+		}
+		//update contact no
+		if (len(c.PostForm("contact_no")) > 0) {
+			user.ContactNo = c.PostForm("contact_no")
+		}
+		//update user lvel
+		if (len(c.PostForm("user_level")) > 0) {
+			user.UserLevel = c.PostForm("user_level")
+		}
+		// update gender
+		if (len(c.PostForm("gender")) > 0) {
+			user.Gender = c.PostForm("gender")
+		}
+		result := handler.db.Save(&user)
+		if result.RowsAffected > 0 {
+			c.JSON(http.StatusOK, user)
+		} else {
+			respond(http.StatusBadRequest,result.Error.Error(),c,true)	
+		}
+	} else {
+		respond(http.StatusBadRequest,"User record not found!",c,true)
+	}
+	return
+}
+
 //create new user
 func (handler UserHandler) Create(c *gin.Context) {
 	var user m.User

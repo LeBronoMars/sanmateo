@@ -58,6 +58,7 @@ func LoadAPIRoutes(r *gin.Engine, db *gorm.DB, pusher *pusher.Client) {
 	public.POST("/forgot_password", userHandler.ForgotPassword)
 	private.PUT("/users/:id/block", userHandler.BlockUser)
 	private.PUT("/users/:id/unblock", userHandler.UnblockUser)
+	private.PUT("/users/:id", userHandler.Update)
 
 	//manage news
 	newsHandler := h.NewNewsHandler(db,pusher)
