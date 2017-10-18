@@ -45,7 +45,7 @@ func (handler WaterLevelHandler) Index(c *gin.Context) {
 		query = query.Limit(10)
 	}
 
-	query.Find(&waterLevels)
+	query.Order("created_at desc").Find(&waterLevels)
 	c.JSON(http.StatusOK,waterLevels)
 	return
 }

@@ -55,6 +55,8 @@ func LoadAPIRoutes(r *gin.Engine, db *gorm.DB, pusher *pusher.Client) {
 	private.GET("/news", newsHandler.Index)
 	private.POST("/news", newsHandler.Create)
 	private.GET("/news/:id", newsHandler.GetNewsById)
+	private.PUT("/news/:id", newsHandler.Update)
+	private.DELETE("/news/:id", newsHandler.Delete)
 
 	//manage gallery
 	galleryHandler := h.NewGalleryHandler(db)
