@@ -35,9 +35,9 @@ func (handler NewsHandler) Index(c *gin.Context) {
 	if startParamExist {
 		start,_ := strconv.Atoi(startParam)
 		if start != 0 {
-			query = query.Offset(start).Order("created_at asc")		
+			query = query.Offset(start)
 		} else {
-			query = query.Offset(0).Order("created_at desc")
+			query = query.Offset(0)
 		}
 	} 
 
@@ -69,13 +69,16 @@ func (handler NewsHandler) Index(c *gin.Context) {
 
 	// sort param exist
 	if sortParamExist {
-		query.Order(sortParam).Find(&news)	
+		query = query.Order(sortParam)
 	} else {
-		query.Order("created_at desc").Find(&news)	
+		query.Order("created_at desc")
 	}
-
-	c.JSON(http.StatusOK,news)
-	return
+	result := query.Find(&news)
+	if (result.RowsAffected > 0) {
+		c.JSON(http.StatusOK,news)	
+	} else {
+		respond(http.StatusBadRequest, result.Error.Error(), c, true)
+	}	
 }
 
 func (handler NewsHandler) Create(c *gin.Context) {
