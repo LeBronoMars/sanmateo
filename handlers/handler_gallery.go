@@ -92,3 +92,19 @@ func (handler GalleryHandler) UpdateGallery(c *gin.Context) {
 	return
 }
 
+func (handler GalleryHandler) Delete(c *gin.Context) {
+	id := c.Param("id")
+	gallery := m.Gallery{}
+	qry := handler.db.Where("id = ?",id).First(&gallery)
+	if qry.RowsAffected > 0 {
+		deleteResult := handler.db.Delete(&gallery) 
+		if (deleteResult.RowsAffected > 0) {
+			respond(http.StatusOK, "Gallery successfully deleted.", c, false)
+		} else {
+			respond(http.StatusBadRequest, deleteResult.Error.Error(), c, true)
+		}
+	} else {
+		respond(http.StatusNotFound, "Gallery record not found.", c, true)
+	}
+}
+
