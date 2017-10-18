@@ -72,6 +72,22 @@ func (handler AnnouncementHandler) Create(c *gin.Context) {
 	return
 }
 
+func (handler AnnouncementHandler) Delete(c *gin.Context) {
+	id := c.Param("id")
+	announcement := m.Announcement{}
+	result := handler.db.Where("id = ?",id).First(&announcement)
+	if result.RowsAffected > 0 {
+		deleteResult := handler.db.Delete(&announcement)
+		if (deleteResult.RowsAffected > 0) {
+			respond(http.StatusOK, "Announcement record successfully deleted.", c, false)
+		} else {
+			respond(http.StatusBadRequest, deleteResult.Error.Error(), c, true)
+		}
+	} else {
+		respond(http.StatusNotFound, "Announcement not found.", c, true)
+	}
+}
+
 func (handler AnnouncementHandler) GetAnnouncementById(c *gin.Context) {
 	id := c.Param("id")
 	announcement := m.Announcement{}

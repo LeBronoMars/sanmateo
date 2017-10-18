@@ -3,7 +3,6 @@ package handlers
 import (
 	"net/http"
 	"time"
-	"fmt"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
