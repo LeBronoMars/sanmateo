@@ -66,7 +66,7 @@ func (handler NewsHandler) Index(c *gin.Context) {
 		}
 	}
 
-	query.Find(&news)
+	query.Order("created_at desc").Find(&news)
 	c.JSON(http.StatusOK,news)
 	return
 }

@@ -45,7 +45,7 @@ func (handler AnnouncementHandler) Index(c *gin.Context) {
 		query = query.Limit(10)
 	}
 
-	query.Find(&announcements)
+	query.Order("created_at desc").Find(&announcements)
 	c.JSON(http.StatusOK,announcements)
 	return
 }
