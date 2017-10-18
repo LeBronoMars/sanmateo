@@ -61,11 +61,9 @@ func (handler NewsHandler) Index(c *gin.Context) {
 		startOfDay := GetStartOfDay(now)
 		if whenParam == "today" {
 			endOfDay := GetEndOfDay(now)
-			fmt.Printf("\nStart Of Day ----> %v",startOfDay)
-			fmt.Printf("\nEnd of Day ----> %v",endOfDay)
-			query = query.Where("created_at between ? AND ?",startOfDay,endOfDay)
+			query = query.Where("created_at between ? AND ?",startOfDay, endOfDay)
 		} else if whenParam == "previous" {
-			query = query.Where("created_at < ?",startOfDay)
+			query = query.Where("created_at < ?", startOfDay)
 		}
 	}
 

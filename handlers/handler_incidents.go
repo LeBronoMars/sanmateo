@@ -62,7 +62,7 @@ func (handler IncidentsHandler) Index(c *gin.Context) {
 		query = query.Where("status = ?",statusParam)
 	}
 
-	query.Find(&incidents)
+	query.Order("incident_date_reported desc").Find(&incidents)
 	c.JSON(http.StatusOK,incidents)
 	return
 }
