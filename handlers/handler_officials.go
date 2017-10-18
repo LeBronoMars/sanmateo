@@ -48,6 +48,23 @@ func (handler OfficialHandler) Create(c *gin.Context) {
 	return
 }
 
+// delete official
+func (handler OfficialHandler) Delete(c *gin.Context) {
+	id := c.Param("id")
+	official := m.Official{}
+	qry := handler.db.Where("id = ? AND status = ?",id,"active").First(&official)
+	if qry.RowsAffected > 0 {
+		deleteResult := handler.db.Delete(&official)
+		if (deleteResult.RowsAffected > 0) {
+			respond(http.StatusOK, "Official record successfully deleted.", c, false)
+		} else {
+			respond(http.StatusBadRequest, deleteResult.Error.Error(), c, true)
+		}
+	} else {
+		respond(http.StatusNotFound, "No record found.", c, true)
+	}
+}
+
 //update official
 func (handler OfficialHandler) UpdateOfficialRecord(c *gin.Context) {
 	id := c.Param("id")
