@@ -102,4 +102,20 @@ func (handler WaterLevelHandler) GetWaterLevelByArea(c *gin.Context) {
 	return
 }
 
+func (handler WaterLevelHandler) Delete(c *gin.Context) {
+	id := c.Param("id")
+	waterLevel := m.WaterLevel{}
+	result := handler.db.Where("id = ?",id).First(&waterLevel)
+	if result.RowsAffected > 0 {
+		deleteResult := handler.db.Delete(&waterLevel)
+		if (deleteResult.RowsAffected > 0) {
+			respond(http.StatusOK, "Water level record successfully deleted", c, false)	
+		} else {
+			respond(http.StatusBadRequest, deleteResult.Error.Error(), c, true)			
+		}
+	} else {
+		respond(http.StatusNotFound, "Water level record record not found.", c, true)
+	}
+}
+
 

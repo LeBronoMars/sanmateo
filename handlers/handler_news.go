@@ -29,6 +29,7 @@ func (handler NewsHandler) Index(c *gin.Context) {
 	limitParam,limitParamExist := c.GetQuery("limit")
 	statusParam,statusParamExist := c.GetQuery("status")
 	whenParam,whenParamExist := c.GetQuery("when")
+	sortParam,sortParamExist := c.GetQuery("sort")
 
 	//start param exist
 	if startParamExist {
@@ -66,7 +67,13 @@ func (handler NewsHandler) Index(c *gin.Context) {
 		}
 	}
 
-	query.Order("created_at desc").Find(&news)
+	// sort param exist
+	if sortParamExist {
+		query.Order(sortParam).Find(&news)	
+	} else {
+		query.Order("created_at desc").Find(&news)	
+	}
+
 	c.JSON(http.StatusOK,news)
 	return
 }
