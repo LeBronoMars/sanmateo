@@ -130,7 +130,6 @@ func (handler IncidentsHandler) Count(c *gin.Context) {
 		query = query.Where("status = ?",statusParam)
 	}
 
-
 	count := 0;
 	query.Find(&incidents).Count(&count)
 

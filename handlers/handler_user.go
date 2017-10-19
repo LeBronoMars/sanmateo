@@ -56,6 +56,16 @@ func (handler UserHandler) Index(c *gin.Context) {
 	return
 }
 
+func (handler UserHandler) Count(c *gin.Context) {
+	users := []m.User{}
+	var query = handler.db
+
+	count := 0;
+	query.Find(&users).Count(&count)
+
+	c.JSON(http.StatusOK, &TotalCount{Count: count})
+}
+
 func (handler UserHandler) Update(c *gin.Context) {
 	id := c.Param("id")
 	user := m.User{}

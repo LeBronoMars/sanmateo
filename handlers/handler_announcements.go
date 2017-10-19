@@ -50,6 +50,16 @@ func (handler AnnouncementHandler) Index(c *gin.Context) {
 	return
 }
 
+func (handler AnnouncementHandler) Count(c *gin.Context) {
+	announcements := []m.Announcement{}	
+	var query = handler.db
+
+	count := 0;
+	query.Find(&announcements).Count(&count)
+
+	c.JSON(http.StatusOK, &TotalCount{Count: count})
+}
+
 func (handler AnnouncementHandler) Create(c *gin.Context) {
 	var announcement m.Announcement
 	err := c.Bind(&announcement)

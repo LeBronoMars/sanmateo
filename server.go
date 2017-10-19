@@ -51,6 +51,7 @@ func LoadAPIRoutes(r *gin.Engine, db *gorm.DB, pusher *pusher.Client) {
 	public.POST("/register/super", userHandler.CreateSuperAdmin)
 	public.POST("/login", userHandler.Auth)
 	private.GET("/users", userHandler.Index)
+	private.GET("/count/users", userHandler.Count)
 	private.PUT("/change_password", userHandler.ChangePassword)
 	private.PUT("/change_profile_pic", userHandler.ChangeProfilePic)
 	private.GET("/users/:user_id", userHandler.GetUserById)
@@ -73,6 +74,7 @@ func LoadAPIRoutes(r *gin.Engine, db *gorm.DB, pusher *pusher.Client) {
 	galleryHandler := h.NewGalleryHandler(db)
 	private.POST("/gallery", galleryHandler.Create)
 	private.GET("/galleries", galleryHandler.Index)
+	private.GET("/count/galleries", galleryHandler.Count)
 	private.PUT("/galleries/:id", galleryHandler.UpdateGallery)
 	private.DELETE("/galleries/:id", galleryHandler.Delete)
 
@@ -98,6 +100,7 @@ func LoadAPIRoutes(r *gin.Engine, db *gorm.DB, pusher *pusher.Client) {
 	//manage announcements
 	announcementHandler := h.NewAnnouncementHandler(db,pusher)
 	private.GET("/announcements", announcementHandler.Index)
+	private.GET("/count/announcements", announcementHandler.Count)
 	private.POST("/announcements", announcementHandler.Create)
 	private.GET("/announcements/show/:id", announcementHandler.GetAnnouncementById)
 	private.GET("/announcements/latest/:id", announcementHandler.GetNewAnnouncements)
@@ -106,6 +109,7 @@ func LoadAPIRoutes(r *gin.Engine, db *gorm.DB, pusher *pusher.Client) {
 	//manage water level monitoring
 	waterLevelHandler := h.NewWaterLevelHandler(db,pusher)
 	private.GET("/water_level", waterLevelHandler.Index)
+	private.GET("/count/water_level", waterLevelHandler.Count)
 	private.POST("/water_level", waterLevelHandler.Create)
 	private.GET("/water_level/latest/:id", waterLevelHandler.GetNewWaterLevelNotifications)
 	private.GET("/water_level/filter", waterLevelHandler.GetWaterLevelByArea)

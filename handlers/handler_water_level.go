@@ -50,6 +50,18 @@ func (handler WaterLevelHandler) Index(c *gin.Context) {
 	return
 }
 
+func (handler WaterLevelHandler) Count(c *gin.Context) {
+	waterLevels := []m.WaterLevel{}	
+	var query = handler.db
+
+	count := 0;
+	query.Find(&waterLevels).Count(&count)
+
+	c.JSON(http.StatusOK, &TotalCount{Count: count})
+	return
+}
+
+
 func (handler WaterLevelHandler) Create(c *gin.Context) {
 	var waterLevel m.WaterLevel
 	err := c.Bind(&waterLevel)

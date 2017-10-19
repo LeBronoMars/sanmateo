@@ -47,6 +47,18 @@ func (handler GalleryHandler) Index(c *gin.Context) {
 	return
 }
 
+
+func (handler GalleryHandler) Count(c *gin.Context) {
+	galleries := []m.Gallery{}	
+	var query = handler.db
+
+	count := 0;
+	query.Find(&galleries).Count(&count)
+
+	c.JSON(http.StatusOK, &TotalCount{Count: count})
+	return
+}
+
 func (handler GalleryHandler) Create(c *gin.Context) {
 	var gallery m.Gallery
 	err := c.Bind(&gallery)
