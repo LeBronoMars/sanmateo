@@ -169,7 +169,7 @@ func InitDB() *gorm.DB {
 		panic(fmt.Sprintf("Error connecting to the database:  %s", err))
 	}
 	_db.DB()
-	_db.LogMode(false)
+	_db.LogMode(true)
 	_db.Set("gorm:table_options", "ENGINE=InnoDB").AutoMigrate(&m.User{},&m.News{},&m.Gallery{},&m.Incident{},
 																&m.IncidentReport{},&m.Notification{},
 																&m.Announcement{},&m.WaterLevel{},&m.Official{})

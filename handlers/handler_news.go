@@ -73,8 +73,9 @@ func (handler NewsHandler) Index(c *gin.Context) {
 	} else {
 		query.Order("created_at desc")
 	}
+
 	result := query.Find(&news)
-	if (result.RowsAffected > 0) {
+	if (result.Error == nil) {
 		c.JSON(http.StatusOK,news)	
 	} else {
 		respond(http.StatusBadRequest, result.Error.Error(), c, true)
