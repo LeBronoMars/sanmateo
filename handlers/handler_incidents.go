@@ -55,12 +55,64 @@ func (handler IncidentsHandler) Index(c *gin.Context) {
 		}
 	} 
 
+	//type param exist
+	if typeParamExist {
+		query = query.Where("incident_type = ?",typeParam)
+	} 
+
+	//reported by param exist
+	if reportedByParamExist {
+		query = query.Where("reporter_id = ?",reportedByParam)
+	}
+
+	//status param exist
+	if statusParamExist {
+		query = query.Where("status = ?",statusParam)
+	}
+
+	// sort param exist
+	if sortParamExist {
+		query = query.Order(sortParam)
+	} else {
+		query.Order("incident_date_reported desc")
+	}
+
 	//limit param exist
 	if limitParamExist {
 		limit,_ := strconv.Atoi(limitParam)
 		query = query.Limit(limit)
 	} else {
 		query = query.Limit(10)
+	}
+
+	result := query.Order("incident_date_reported desc").Find(&incidents)
+
+	if (result.Error == nil) {
+		c.JSON(http.StatusOK, incidents)	
+	} else {
+		respond(http.StatusBadRequest, result.Error.Error(), c, true)
+	}	
+}
+
+func (handler IncidentsHandler) Count(c *gin.Context) {
+	incidents := []m.QryIncident{}
+	var query = handler.db
+
+	typeParam,typeParamExist := c.GetQuery("incident_type")
+	statusParam,statusParamExist := c.GetQuery("status")
+	reportedByParam,reportedByParamExist := c.GetQuery("reported_by")
+	whenParam,whenParamExist := c.GetQuery("when")
+		//when param exist
+	if whenParamExist {
+		asia, _ := time.LoadLocation("Asia/Manila")
+		now := time.Now().In(asia)				
+		startOfDay := GetStartOfDay(now)
+		if whenParam == "today" {
+			endOfDay := GetEndOfDay(now)
+			query = query.Where("incident_date_reported between ? AND ?",startOfDay, endOfDay)
+		} else if whenParam == "previous" {
+			query = query.Where("incident_date_reported < ?", startOfDay)
+		}
 	}
 
 	//type param exist
@@ -78,19 +130,11 @@ func (handler IncidentsHandler) Index(c *gin.Context) {
 		query = query.Where("status = ?",statusParam)
 	}
 
-		// sort param exist
-	if sortParamExist {
-		query = query.Order(sortParam)
-	} else {
-		query.Order("incident_date_reported desc")
-	}
 
-	result := query.Order("incident_date_reported desc").Find(&incidents)
-	if (result.Error == nil) {
-		c.JSON(http.StatusOK, incidents)	
-	} else {
-		respond(http.StatusBadRequest, result.Error.Error(), c, true)
-	}	
+	count := 0;
+	query.Find(&incidents).Count(&count)
+
+	c.JSON(http.StatusOK, &TotalCount{Count: count})
 }
 
 func (handler IncidentsHandler) Create(c *gin.Context) {
@@ -186,7 +230,7 @@ func (handler IncidentsHandler) BlockIncidentReport(c *gin.Context) {
 func (handler IncidentsHandler) ApproveIncidentReport(c *gin.Context) {
 	incident_id := c.Param("incident_id")
 	incident := m.Incident{}
-	qry := handler.db.Where("id = ? AND status = ?",incident_id,"for approval").First(&incident)
+	qry := handler.db.Where("id = ? AND status = ?",incident_id, "for approval").First(&incident)
 	if qry.Error == nil {
 		incident.Status = "active"
 		res := handler.db.Save(&incident)

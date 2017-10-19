@@ -82,6 +82,37 @@ func (handler NewsHandler) Index(c *gin.Context) {
 	}	
 }
 
+func (handler NewsHandler) Count(c *gin.Context) {
+	news := []m.News{}	
+	var query = handler.db
+
+	statusParam,statusParamExist := c.GetQuery("status")
+	whenParam,whenParamExist := c.GetQuery("when")
+
+	//status param exist
+	if statusParamExist {
+		query = query.Where("status = ?",statusParam)
+	}
+
+	//when param exist
+	if whenParamExist {
+		asia, _ := time.LoadLocation("Asia/Manila")
+		now := time.Now().In(asia)				
+		startOfDay := GetStartOfDay(now)
+		if whenParam == "today" {
+			endOfDay := GetEndOfDay(now)
+			query = query.Where("created_at between ? AND ?",startOfDay, endOfDay)
+		} else if whenParam == "previous" {
+			query = query.Where("created_at < ?", startOfDay)
+		}
+	}
+
+	count := 0;
+	query.Find(&news).Count(&count)
+
+	c.JSON(http.StatusOK, &TotalCount{Count: count})
+}
+
 func (handler NewsHandler) Create(c *gin.Context) {
 	var news m.News
 	err := c.Bind(&news)

@@ -22,6 +22,10 @@ func respond(statusCode int, responseMessage string, c *gin.Context, isError boo
 	c.JSON(statusCode,response)
 }
 
+type TotalCount struct {
+	Count int `json:"total_count"`
+}
+
 func jwtVerifier() gin.HandlerFunc {
 	return func(c *gin.Context) {
 

@@ -63,6 +63,7 @@ func LoadAPIRoutes(r *gin.Engine, db *gorm.DB, pusher *pusher.Client) {
 	//manage news
 	newsHandler := h.NewNewsHandler(db,pusher)
 	private.GET("/news", newsHandler.Index)
+	private.GET("/count/news", newsHandler.Count)
 	private.POST("/news", newsHandler.Create)
 	private.GET("/news/:id", newsHandler.GetNewsById)
 	private.PUT("/news/:id", newsHandler.Update)
@@ -78,6 +79,7 @@ func LoadAPIRoutes(r *gin.Engine, db *gorm.DB, pusher *pusher.Client) {
 	//manage incidents
 	incidentsHandler := h.NewIncidentsHandler(db,pusher)
 	private.GET("/incidents", incidentsHandler.Index)
+	private.GET("/count/incidents", incidentsHandler.Count)
 	private.POST("/incident", incidentsHandler.Create)
 	private.GET("/incidents/show/:incident_id", incidentsHandler.Show)
 	private.GET("/incidents/latest/:incident_id", incidentsHandler.GetNewIncidents)
