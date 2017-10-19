@@ -3,6 +3,7 @@ package handlers
 import (
 	"net/http"
 	"strconv"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/gorm"
@@ -28,6 +29,21 @@ func (handler IncidentsHandler) Index(c *gin.Context) {
 	typeParam,typeParamExist := c.GetQuery("incident_type")
 	statusParam,statusParamExist := c.GetQuery("status")
 	reportedByParam,reportedByParamExist := c.GetQuery("reported_by")
+	whenParam,whenParamExist := c.GetQuery("when")
+	sortParam,sortParamExist := c.GetQuery("sort")
+
+		//when param exist
+	if whenParamExist {
+		asia, _ := time.LoadLocation("Asia/Manila")
+		now := time.Now().In(asia)				
+		startOfDay := GetStartOfDay(now)
+		if whenParam == "today" {
+			endOfDay := GetEndOfDay(now)
+			query = query.Where("incident_date_reported between ? AND ?",startOfDay, endOfDay)
+		} else if whenParam == "previous" {
+			query = query.Where("incident_date_reported < ?", startOfDay)
+		}
+	}
 
 	//start param exist
 	if startParamExist {
@@ -62,9 +78,19 @@ func (handler IncidentsHandler) Index(c *gin.Context) {
 		query = query.Where("status = ?",statusParam)
 	}
 
-	query.Order("incident_date_reported desc").Find(&incidents)
-	c.JSON(http.StatusOK,incidents)
-	return
+		// sort param exist
+	if sortParamExist {
+		query = query.Order(sortParam)
+	} else {
+		query.Order("incident_date_reported desc")
+	}
+
+	result := query.Order("incident_date_reported desc").Find(&incidents)
+	if (result.Error == nil) {
+		c.JSON(http.StatusOK, incidents)	
+	} else {
+		respond(http.StatusBadRequest, result.Error.Error(), c, true)
+	}	
 }
 
 func (handler IncidentsHandler) Create(c *gin.Context) {
