@@ -26,6 +26,7 @@ func (handler WaterLevelHandler) Index(c *gin.Context) {
 
 	startParam,startParamExist := c.GetQuery("start")
 	limitParam,limitParamExist := c.GetQuery("limit")
+	areaParam,areaParamExist := c.GetQuery("area")
 
 	//start param exist
 	if startParamExist {
@@ -44,6 +45,11 @@ func (handler WaterLevelHandler) Index(c *gin.Context) {
 	} else {
 		query = query.Limit(10)
 	}
+
+    // area param exist
+	if limitareaParamExistParamExist {
+		query = query.Where("area = ?", areaParam)
+	} 
 
 	query.Order("created_at desc").Find(&waterLevels)
 	c.JSON(http.StatusOK,waterLevels)
