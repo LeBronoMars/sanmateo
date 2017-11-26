@@ -47,7 +47,7 @@ func (handler WaterLevelHandler) Index(c *gin.Context) {
 	}
 
     // area param exist
-	if limitareaParamExistParamExist {
+	if areaParamExist {
 		query = query.Where("area = ?", areaParam)
 	} 
 
