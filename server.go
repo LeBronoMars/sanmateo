@@ -121,6 +121,22 @@ func LoadAPIRoutes(r *gin.Engine, db *gorm.DB, pusher *pusher.Client) {
 	private.POST("/official", officialHandler.Create)
 	private.PUT("/officials/:id", officialHandler.UpdateOfficialRecord)
 	private.DELETE("/officials/:id", officialHandler.Delete)
+
+	// weather menu
+	weatherMenuHandler := h.NewWeatherMenuHandler(db)
+	private.GET("/weather/menu", weatherMenuHandler.Index)
+	private.POST("/weather/menu", weatherMenuHandler.Create)
+	private.GET("/count/weather/menu", weatherMenuHandler.Count)
+	private.DELETE("/weather/menu/:id", weatherMenuHandler.Delete)
+
+	// weather reading
+	weatherReadingHandler := h.NewWeatherReadingHandler(db)
+	private.GET("/weather/reading", weatherReadingHandler.Index)
+	private.POST("/weather/reading", weatherReadingHandler.Create)
+	private.GET("/count/weather/reading", weatherReadingHandler.Count)
+	private.DELETE("/weather/reading/:id", weatherReadingHandler.Delete)
+	private.PUT("/weather/reading/:id", weatherReadingHandler.Update)
+
 	r.Run(fmt.Sprintf(":%s", "7070"))
 }
 
@@ -176,9 +192,17 @@ func InitDB() *gorm.DB {
 	}
 	_db.DB()
 	_db.LogMode(true)
-	_db.Set("gorm:table_options", "ENGINE=InnoDB").AutoMigrate(&m.User{},&m.News{},&m.Gallery{},&m.Incident{},
-																&m.IncidentReport{},&m.Notification{},
-																&m.Announcement{},&m.WaterLevel{},&m.Official{})
+	_db.Set("gorm:table_options", "ENGINE=InnoDB").AutoMigrate(&m.User{}, 
+																&m.News{},
+																&m.Gallery{},
+																&m.Incident{},
+																&m.IncidentReport{},
+																&m.Notification{},
+																&m.Announcement{},
+																&m.WaterLevel{},
+																&m.Official{},
+																&m.WeatherMenu{},
+																&m.WeatherReading{})
 	return &_db
 }
 
