@@ -166,6 +166,11 @@ func (handler WeatherReadingHandler) Update(c *gin.Context) {
 			weatherReading.Temperature = temperature
 		}
 
+		// update weatherReading Remarks
+		if (len(c.PostForm("remakrs")) > 0) {
+			weatherReading.Remarks = c.PostForm("remarks")
+		}
+
 		result := handler.db.Save(&weatherReading)
 		if result.RowsAffected > 0 {
 			c.JSON(http.StatusOK, weatherReading)
