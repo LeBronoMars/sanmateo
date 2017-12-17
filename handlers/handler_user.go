@@ -207,6 +207,7 @@ func (handler UserHandler) Auth(c *gin.Context) {
 					//authentication successful
 					authenticatedUser := m.AuthenticatedUser{}
 					authenticatedUser.Id = user.Id
+					authenticatedUser.ContactNo = user.ContactNo
 					authenticatedUser.FirstName = user.FirstName
 					authenticatedUser.LastName = user.LastName
 					authenticatedUser.Status = user.Status
