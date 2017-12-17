@@ -15,4 +15,5 @@ type WeatherReading struct {
 	DewPoint float64 `json:"dew_point" form:"dew_point" binding:"required"`
 	Pressure float64 `json:"pressure" form:"pressure" binding:"required"`
 	Visibility float64 `json:"visibility" form:"visibility" binding:"required"`
+	Temperature float64 `json:"temperature" form:"temperature" binding:"required"`
 }
