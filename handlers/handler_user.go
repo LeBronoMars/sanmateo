@@ -125,6 +125,7 @@ func (handler UserHandler) Create(c *gin.Context) {
 				authenticatedUser := m.AuthenticatedUser{}
 				authenticatedUser.Id = user.Id
 				authenticatedUser.FirstName = user.FirstName
+				authenticatedUser.ContactNo = user.ContactNo
 				authenticatedUser.LastName = user.LastName
 				authenticatedUser.Status = user.Status
 				authenticatedUser.Email = user.Email
