@@ -137,6 +137,14 @@ func LoadAPIRoutes(r *gin.Engine, db *gorm.DB, pusher *pusher.Client) {
 	private.DELETE("/weather/reading/:id", weatherReadingHandler.Delete)
 	private.PUT("/weather/reading/:id", weatherReadingHandler.Update)
 
+	// storm watch
+	stormWatchHandler := h.NewStormWatchHandler(db)
+	private.GET("/storm_watch", stormWatchHandler.Index)
+	private.POST("/storm_watch", stormWatchHandler.Create)
+	private.GET("/count/storm_watch", stormWatchHandler.Count)
+	private.DELETE("/storm_watch/:id", stormWatchHandler.Delete)
+	private.PUT("/storm_watch/:id", stormWatchHandler.Update)
+
 	r.Run(fmt.Sprintf(":%s", "7070"))
 }
 
@@ -202,7 +210,8 @@ func InitDB() *gorm.DB {
 																&m.WaterLevel{},
 																&m.Official{},
 																&m.WeatherMenu{},
-																&m.WeatherReading{})
+																&m.WeatherReading{},
+																&m.StormWatch{})
 	return &_db
 }
 
