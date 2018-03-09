@@ -3,6 +3,7 @@ package handlers
 import (
 	"net/http"
 	"strconv"
+	"fmt"
 
 	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/gorm"
@@ -70,8 +71,11 @@ func (handler AnnouncementHandler) Create(c *gin.Context) {
 			data := map[string]string{"action":"announcements",
 										"title" : "Announcement from San Mateo Municipal",
 										"message" : announcement.Message, 
+										"created_at" : announcement.CreatedAt.Format("2006-01-02 15:04:05"),
 										"id": strconv.Itoa(announcement.Id)}
 			handler.pusher.Trigger("clients","san_mateo_event",data)
+
+			fmt.Println("MUST SEND NOTIF");
 			c.JSON(http.StatusCreated,announcement)
 		} else {
 			respond(http.StatusBadRequest,result.Error.Error(),c,true)

@@ -7,14 +7,16 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/gorm"
 	m "profile/sanmateo/api/models"
+	"github.com/pusher/pusher-http-go"
 )
 
 type WeatherReadingHandler struct {
 	db *gorm.DB
+	pusher *pusher.Client
 }
 
-func NewWeatherReadingHandler(db *gorm.DB) *WeatherReadingHandler {
-	return &WeatherReadingHandler{db}
+func NewWeatherReadingHandler(db *gorm.DB, pusher *pusher.Client) *WeatherReadingHandler {
+	return &WeatherReadingHandler{db,pusher}
 }
 
 //get all weather menu
@@ -69,6 +71,13 @@ func (handler WeatherReadingHandler) Create(c *gin.Context) {
 		result := handler.db.Create(&weatherReading)
 
 		if result.RowsAffected > 0 {
+			data := map[string]string{"action":"weather",
+										"title" : "New weather reading",
+										"message" : weatherReading.Remarks,
+										"created_at" : weatherReading.CreatedAt.Format("2006-01-02 15:04:05"),
+										"id": strconv.Itoa(weatherReading.Id)}
+			handler.pusher.Trigger("clients","san_mateo_event",data)
+
 			c.JSON(http.StatusCreated,weatherReading)
 		} else {
 			respond(http.StatusBadRequest, result.Error.Error(), c, true)

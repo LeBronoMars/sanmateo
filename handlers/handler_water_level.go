@@ -3,6 +3,7 @@ package handlers
 import (
 	"net/http"
 	"strconv"
+	"fmt"
 
 	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/gorm"
@@ -78,7 +79,9 @@ func (handler WaterLevelHandler) Create(c *gin.Context) {
 			data := map[string]string{"action":"water level",
 										"title" : waterLevel.Area + " water level",
 										"message" : waterLevel.Alert, 
+										"created_at" : waterLevel.CreatedAt.Format("2006-01-02 15:04:05"),
 										"area" : waterLevel.Area,
+										"level" : fmt.Sprintf("%.2f", waterLevel.Level),
 										"id": strconv.Itoa(waterLevel.Id)}
 			handler.pusher.Trigger("clients","san_mateo_event",data)
 			c.JSON(http.StatusCreated,waterLevel)

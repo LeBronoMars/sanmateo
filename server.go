@@ -130,7 +130,7 @@ func LoadAPIRoutes(r *gin.Engine, db *gorm.DB, pusher *pusher.Client) {
 	private.DELETE("/weather/menu/:id", weatherMenuHandler.Delete)
 
 	// weather reading
-	weatherReadingHandler := h.NewWeatherReadingHandler(db)
+	weatherReadingHandler := h.NewWeatherReadingHandler(db, pusher)
 	private.GET("/weather/reading", weatherReadingHandler.Index)
 	private.POST("/weather/reading", weatherReadingHandler.Create)
 	private.GET("/count/weather/reading", weatherReadingHandler.Count)
@@ -138,7 +138,7 @@ func LoadAPIRoutes(r *gin.Engine, db *gorm.DB, pusher *pusher.Client) {
 	private.PUT("/weather/reading/:id", weatherReadingHandler.Update)
 
 	// storm watch
-	stormWatchHandler := h.NewStormWatchHandler(db)
+	stormWatchHandler := h.NewStormWatchHandler(db, pusher)
 	private.GET("/storm_watch", stormWatchHandler.Index)
 	private.POST("/storm_watch", stormWatchHandler.Create)
 	private.GET("/count/storm_watch", stormWatchHandler.Count)

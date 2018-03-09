@@ -7,14 +7,16 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/gorm"
 	m "profile/sanmateo/api/models"
+	"github.com/pusher/pusher-http-go"
 )
 
 type StormWatchHandler struct {
 	db *gorm.DB
+	pusher *pusher.Client
 }
 
-func NewStormWatchHandler(db *gorm.DB) *StormWatchHandler {
-	return &StormWatchHandler{db}
+func NewStormWatchHandler(db *gorm.DB, pusher *pusher.Client) *StormWatchHandler {
+	return &StormWatchHandler{db, pusher}
 }
 
 //get all weather menu
@@ -68,6 +70,13 @@ func (handler StormWatchHandler) Create(c *gin.Context) {
 		result := handler.db.Create(&stormWatch)
 
 		if result.RowsAffected > 0 {
+			data := map[string]string{"action":"storm",
+							"title" : "New storm watch",
+							"message" : stormWatch.Summary,
+							"created_at" : stormWatch.CreatedAt.Format("2006-01-02 15:04:05"),
+							"id": strconv.Itoa(stormWatch.Id)}
+			handler.pusher.Trigger("clients","san_mateo_event",data)
+
 			c.JSON(http.StatusCreated,stormWatch)
 		} else {
 			respond(http.StatusBadRequest, result.Error.Error(), c, true)
