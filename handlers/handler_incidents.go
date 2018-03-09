@@ -153,6 +153,7 @@ func (handler IncidentsHandler) Create(c *gin.Context) {
 						data := map[string]string{"action": "incident_approval", 
 						"id": strconv.Itoa(qry_incident.IncidentId),
 						"title":"New incident reported by " + qry_incident.ReporterName,
+						"created_at" : qry_incident.IncidentDateReported.Format("2006-01-02 15:04:05"),
 						"incident_type" : qry_incident.IncidentType,
 						"content": qry_incident.IncidentDescription}
 						handler.pusher.Trigger(admin.Email,"san_mateo_event",data)
@@ -162,6 +163,7 @@ func (handler IncidentsHandler) Create(c *gin.Context) {
 						"id": strconv.Itoa(qry_incident.IncidentId),
 						"title":"New incident reported by " + qry_incident.ReporterName,
 						"incident_type" : qry_incident.IncidentType,
+						"created_at" : qry_incident.IncidentDateReported.Format("2006-01-02 15:04:05"),
 						"content": qry_incident.IncidentDescription}
 						handler.pusher.Trigger("clients","san_mateo_event",data)
 				c.JSON(http.StatusCreated, qry_incident)
@@ -248,6 +250,7 @@ func (handler IncidentsHandler) ApproveIncidentReport(c *gin.Context) {
 				data := map[string]string{"action": "new incident", "id": strconv.Itoa(qry_incident.IncidentId),
 					"title":"New incident reported by " + qry_incident.ReporterName,
 					"incident_type" : qry_incident.IncidentType,
+					"created_at" : qry_incident.IncidentDateReported.Format("2006-01-02 15:04:05"),
 					"content": qry_incident.IncidentDescription}
 				handler.pusher.Trigger("clients","san_mateo_event",data)
 				c.JSON(http.StatusOK,qry_incident)
