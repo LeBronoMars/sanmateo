@@ -141,7 +141,7 @@ func LoadAPIRoutes(r *gin.Engine, db *gorm.DB, pusher *pusher.Client) {
 	stormWatchHandler := h.NewStormWatchHandler(db, pusher)
 	private.GET("/storm_watch", stormWatchHandler.Index)
 	private.POST("/storm_watch", stormWatchHandler.Create)
-	private.GET("/count/storm_watch", stormWatchHandler.Count)
+	private.GET("/count/storms", stormWatchHandler.Count)
 	private.DELETE("/storm_watch/:id", stormWatchHandler.Delete)
 	private.PUT("/storm_watch/:id", stormWatchHandler.Update)
 
