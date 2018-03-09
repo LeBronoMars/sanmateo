@@ -158,6 +158,12 @@ func (handler IncidentsHandler) Create(c *gin.Context) {
 						handler.pusher.Trigger(admin.Email,"san_mateo_event",data)
 					}	
 				}
+				data := map[string]string{"action": "new incident", 
+						"id": strconv.Itoa(qry_incident.IncidentId),
+						"title":"New incident reported by " + qry_incident.ReporterName,
+						"incident_type" : qry_incident.IncidentType,
+						"content": qry_incident.IncidentDescription}
+						handler.pusher.Trigger(admin.Email,"san_mateo_event",data)
 				c.JSON(http.StatusCreated, qry_incident)
 			}
 		} else {
