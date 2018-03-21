@@ -30,8 +30,14 @@ func (handler UserHandler) Index(c *gin.Context) {
 	users := []m.User{}
 	var query = handler.db
 
+	userLevelParam,userLevelParamExist := c.GetQuery("user_level")
 	startParam,startParamExist := c.GetQuery("start")
 	limitParam,limitParamExist := c.GetQuery("limit")
+
+	// user level param exist
+	if userLevelParamExist {
+		query = query.Where("user_level = ?", userLevelParam)
+	} 
 
 	//start param exist
 	if startParamExist {
@@ -60,6 +66,33 @@ func (handler UserHandler) Count(c *gin.Context) {
 	users := []m.User{}
 	var query = handler.db
 
+	userLevelParam,userLevelParamExist := c.GetQuery("user_level")
+	startParam,startParamExist := c.GetQuery("start")
+	limitParam,limitParamExist := c.GetQuery("limit")
+
+	// user level param exist
+	if userLevelParamExist {
+		query = query.Where("user_level = ?", userLevelParam)
+	} 
+
+	//start param exist
+	if startParamExist {
+		start,_ := strconv.Atoi(startParam)
+		if start != 0 {
+			query = query.Offset(start)				
+		} else {
+			query = query.Offset(0)
+		}
+	} 
+
+	//limit param exist
+	if limitParamExist {
+		limit,_ := strconv.Atoi(limitParam)
+		query = query.Limit(limit)
+	} else {
+		query = query.Limit(10)
+	}
+	
 	count := 0;
 	query.Find(&users).Count(&count)
 
